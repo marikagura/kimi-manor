@@ -1,107 +1,95 @@
 # kimi-manor · 描金
 
-A gilt web shell for Claude Code — a dark Art-Nouveau / Mucha desktop that wraps a real
-terminal and a four-room atelier (**atelier · alcove · cabinet · ops**). Hand-drawn gold
-hairline SVG, Cormorant Garamond + 宋体, night / day skins. No icon fonts, no charts where
-a metaphor will do. (codename `cc-gild`.)
+把 Claude Code 包进一间描金（Mucha · 新艺术）网页壳——暗色的桌面，裹着一个真实终端和一个四室
+「atelier」：**atelier · alcove · cabinet · ops**。全手绘金线 SVG，Cormorant Garamond + 宋体，
+昼 / 夜双肤。不用图标字体，能用隐喻的地方不放图表。（代号 `cc-gild`。）
 
-Everything here ships with **placeholder data** and works offline. Point it at your own
-endpoint to drive it live (see [Real data](#real-data)). The bundled `server.mjs` adds
-optional **live bridges** — a real terminal, the **Salon** (Claude + GPT seats) and
-**Parlour** voice — each gated behind your own keys; nothing phones home by default, and
-the UI never assumes a schema (or a backend) it can't render.
+> 出厂即 placeholder 数据、离线可跑。接上你自己的端点，它就是实时的。
 
-## The build
+随附的 `server.mjs` 还带四条可选 **live bridge**——真终端、**Salon**（Claude + GPT 两座）、
+**Parlour** 语音——每条都门控在你自己的 key 后面，默认不联网，UI 也从不假设一个它渲染不了的后端。
 
-`cc-gild-v7.html` is the current single-file atelier — fully self-contained (CSS / JS
-inlined; a few PNGs under `assets/`), four rooms · **atelier · alcove · cabinet · ops**.
-Open it directly or serve it.
+## 单文件构建
 
-## Run
+`cc-gild-v7.html` 是当前的单文件 atelier——完全自包含（CSS / JS 内联，几张 PNG 放 `assets/`），
+四室 · **atelier · alcove · cabinet · ops**。直接打开，或起服务。
+
+## 运行
 
 ```bash
 npm install
 
-# static preview of the atelier (placeholder data, works offline)
-node serve.mjs                  # → http://localhost:8753  (serves cc-gild-v7.html)
+# 静态预览 atelier（placeholder 数据，离线可跑）
+node serve.mjs                  # → http://localhost:8753
 
-# full shell — terminal PTY + /state + the Salon / Parlour bridges
+# 全功能壳 — 终端 PTY + /state + Salon / Parlour bridge
 node server.mjs                 # → http://localhost:7681/atelier
-#   CC_CWD=/path CC_CMD=claude        # working dir / launch command
+#   CC_CWD=/path CC_CMD=claude        # 工作目录 / 启动命令
 ```
 
-`cc-gild-v7.html` is self-contained — you can also just double-click it.
+`cc-gild-v7.html` 自包含——也可以直接双击打开。
 
-## Live bridges (optional)
+## Live bridges（可选）
 
-`server.mjs` binds `127.0.0.1` only and exposes four bridges; each degrades to quiet if
-its tool or key is absent, so the shell runs fine with none of them configured.
+`server.mjs` 只绑 `127.0.0.1`，开四条 bridge；任一缺工具或 key 就静默降级，所以一条都不配也照样跑。
 
-| bridge | what | needs |
+| bridge | 是什么 | 需要 |
 |---|---|---|
-| `/pty` | a real Claude Code / shell terminal | `node-pty` (optional dep) · `SHELL_FALLBACK=1` for a plain shell |
-| `/agent` | the Salon's **Claude** seat (bubble chat, tool calls approved in-UI) | `@anthropic-ai/claude-agent-sdk` + your `claude` login · `CCG_SDK` / `CCG_AGENT_CWD` / `CCG_CWD_ALLOW` to override |
-| `/codex` | the Salon's **GPT** seat (read-only, shell off) | `codex` on PATH · `CODEX_BIN` to override |
-| `/parlour/voice` | text-to-speech for the Parlour | `OPENAI_API_KEY` (or `CCG_TTS_URL` + `CCG_TTS_KEY` for any OpenAI-compatible TTS) · `CCG_VOICE_CLAUDE` / `CCG_VOICE_GPT` / `CCG_TTS_MODEL` |
+| `/pty` | 真 Claude Code / shell 终端 | `node-pty`（optional dep）· `SHELL_FALLBACK=1` 起普通 shell |
+| `/agent` | Salon 的 **Claude** 座（气泡对话，工具调用在 UI 里批准） | `@anthropic-ai/claude-agent-sdk` + 你的 `claude` 登录 · `CCG_SDK` / `CCG_AGENT_CWD` / `CCG_CWD_ALLOW` 覆盖 |
+| `/codex` | Salon 的 **GPT** 座（只读，shell 关） | PATH 上有 `codex` · `CODEX_BIN` 覆盖 |
+| `/parlour/voice` | Parlour 的 text-to-speech | `OPENAI_API_KEY`（或 `CCG_TTS_URL` + `CCG_TTS_KEY` 接任何 OpenAI 兼容 TTS）· `CCG_VOICE_CLAUDE` / `CCG_VOICE_GPT` / `CCG_TTS_MODEL` |
 
-**The Parlour is text by default — it ships with no voice.** Replies render as text;
-to hear them, point `/parlour/voice` at your own TTS — set `OPENAI_API_KEY`, or
-`CCG_TTS_URL` + `CCG_TTS_KEY` for any OpenAI-compatible endpoint. With nothing set the
-room stays silent and just shows the text. Translation isn't bundled either, so the
-caption is the spoken text as-is.
+**Parlour 默认是文字、不带声音。** 回复以文字呈现；要出声，把 `/parlour/voice` 指向你自己的 TTS——
+设 `OPENAI_API_KEY`，或用 `CCG_TTS_URL` + `CCG_TTS_KEY` 接任何 OpenAI 兼容端点。什么都不设就保持安静、
+只显示文字。也不带翻译，字幕就是朗读的原文。
 
-**Weather** is live out of the box — `server.mjs` pulls current conditions from
-[open-meteo](https://open-meteo.com) (keyless), defaulting to central Tokyo. Set
-`CCG_WEATHER_LAT` / `CCG_WEATHER_LNG` / `CCG_WEATHER_PLACE` for your own sky, or
-`CCG_WEATHER=off` to keep the demo weather.
+**天气**开箱即活——`server.mjs` 从 [open-meteo](https://open-meteo.com) 拉当前天况（免 key），
+默认中央东京。设 `CCG_WEATHER_LAT` / `CCG_WEATHER_LNG` / `CCG_WEATHER_PLACE` 换成你自己的天空，
+或 `CCG_WEATHER=off` 留 demo 天气。
 
-## Real data
+## 真数据
 
-The shell paints placeholder state first, then merges real data over it; any fetch
-failure keeps the placeholder, so the UI never blanks. Two paths:
+壳先画 placeholder，再把真数据叠上去；任何 fetch 失败都保留 placeholder，所以 UI 永不空白。两条路：
 
 ```
-# one-shot HTTP (static hosting) — returns the state schema
+# 一次性 HTTP（静态托管）— 返回 state schema
 cc-gild-v7.html?state=https://your-host/api/state
 
-# live mirror — server pushes over a /state WebSocket, re-pushes on change (no polling)
-node server.mjs   → open /atelier
+# 实时镜像 — server 经 /state WebSocket 推，变更即重推（不轮询）
+node server.mjs   → 打开 /atelier
 ```
 
-Try it locally against the demo state:
+本地对着 demo state 试：
 
 ```
 http://localhost:8753/cc-gild-v7.html?state=./state.sample.json
 ```
 
-The contract — top-level keys (`score` · `review` · `ops` · `travel` · `weather`) and the
-per-room `comps` (`heartbeat` · `sky` · `score` · `study` · `sleep` · `opus` · `finance` ·
-`disc`) — plus which rooms are wired and how the **ops** room polls on its own faster
-cadence: [STATE-SCHEMA.md](STATE-SCHEMA.md). The `comps`/`ops` your endpoint omits simply
-stay on their built-in demo, so a partial endpoint is fine.
+契约——顶层 key（`score` · `review` · `ops` · `travel` · `weather`）和每室的 `comps`
+（`heartbeat` · `sky` · `score` · `study` · `sleep` · `opus` · `finance` · `disc`），加上哪些室接了线、
+**ops** 室怎么按自己更快的节奏轮询：见 [STATE-SCHEMA.md](STATE-SCHEMA.md)。你端点省略的 `comps` / `ops`
+就停在内置 demo，所以只给一部分也行。
 
-## Theme
+## 主题
 
-Night (default · candlelit gold-on-warmblack) / day (rose field with gilt linework).
-Toggle in the top-right; choice persists in `localStorage`.
+夜（默认 · 烛光金底暖黑）/ 昼（玫瑰田 + 金线）。右上角切换，选择存在 `localStorage`。
 
-## Layout
+## 目录
 
 ```
-cc-gild-v7.html    the single-file atelier (current artifact)
-serve.mjs          static preview server → cc-gild-v7.html
-server.mjs         terminal-shell + /state WebSocket reference server
-state.sample.json  demo state for ?state=
-STATE-SCHEMA.md    real-data contract (top-level + comps + ops)
-assets/            runtime SVGs (pilaster · rose-panel) + design-source PNGs & components
-public/            terminal-shell PWA (index.html · boot.js · sw.js)
+cc-gild-v7.html    单文件 atelier（当前产物）
+serve.mjs          静态预览 server → cc-gild-v7.html
+server.mjs         终端壳 + /state WebSocket 参考 server
+state.sample.json  ?state= 的 demo 数据
+STATE-SCHEMA.md    真数据契约（顶层 + comps + ops）
+assets/            运行时 SVG（pilaster · rose-panel）+ 设计源（PNG & 组件）
+public/            终端壳 PWA（index.html · boot.js · sw.js）
 ```
 
 ## License
 
-Code: [MIT](LICENSE) © 2026 marikagura.
+代码：[MIT](LICENSE) © 2026 marikagura。
 
-Artwork is **not** MIT. The hand-drawn gold-hairline SVG/PNG illustrations — the candle,
-fox, roses, bookshelf, sigil and the rest of the 描金 set — are © 2026 marikagura, all
-rights reserved (reuse for your own project by permission). Fork the shell freely; draw
-your own line.
+艺术**不**走 MIT。那套手绘金线 SVG / PNG——烛台、狐狸、玫瑰、书架、印记，以及其余描金件——
+© 2026 marikagura，保留所有权利（用到你自己项目里需经许可）。壳随便 fork；线自己画。
