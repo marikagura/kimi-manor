@@ -6,11 +6,15 @@
   "author": "marikagura",
   "license": "MIT",
   "repository": { "type": "git", "url": "git+https://github.com/marikagura/kimi-manor.git" },
+  "main": "electron/main.cjs",
   "scripts": {
     "start": "node server.mjs",
     "shell": "SHELL_FALLBACK=1 node server.mjs",
     "preview": "node serve.mjs",
-    "icons": "node scripts/make-icons.mjs"
+    "icons": "node scripts/make-icons.mjs",
+    "electron:dev": "CCGILD_NODE=node electron .",
+    "dist:mac": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dmg",
+    "dist:win": "electron-builder --win nsis"
   },
   "dependencies": {
     "ws": "^8.18.0"
@@ -20,6 +24,20 @@
     "@anthropic-ai/claude-agent-sdk": "^0.3.0"
   },
   "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.0",
     "sharp": "^0.33.0"
+  },
+  "build": {
+    "appId": "com.marikagura.ccgild",
+    "productName": "cc-gild",
+    "asar": false,
+    "directories": { "output": "dist" },
+    "files": [
+      "electron/**", "server.mjs", "serve.mjs", "static.mjs",
+      "cc-gild-v7.html", "state.sample.json", "public/**", "assets/**", "package.json"
+    ],
+    "mac": { "target": "dmg" },
+    "win": { "target": "nsis" }
   }
 }

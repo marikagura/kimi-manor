@@ -29,6 +29,13 @@ node server.mjs                 # → http://localhost:7681/atelier
 
 `cc-gild-v7.html` 自包含——也可以直接双击打开。
 
+## 桌面 app（可选 · 未测试）
+
+也能包成原生桌面 app：`npm run electron:dev` 开窗口，`npm run dist:mac` / `npm run dist:win`
+出 `.dmg` / `.exe`。Electron 壳是附加层（起 `server.mjs` + 原生窗口），web 壳照旧能用。
+**注意：打包配置已写好，但 `.dmg` / `.exe` 成品还没实际构建验证过**——细节、原生模块（`node-pty`）
+重建、签名都在 [ELECTRON.md](ELECTRON.md)。
+
 ## Live bridges（可选）
 
 `server.mjs` 只绑 `127.0.0.1`，开四条 bridge；任一缺工具或 key 就静默降级，所以一条都不配也照样跑。
@@ -85,6 +92,8 @@ state.sample.json  ?state= 的 demo 数据
 STATE-SCHEMA.md    真数据契约（顶层 + comps + ops）
 assets/            运行时 SVG（pilaster · rose-panel）+ 设计源（PNG & 组件）
 public/            终端壳 PWA（index.html · boot.js · sw.js）
+electron/          原生窗口 main + preload（npm run electron:dev / dist:*）
+ELECTRON.md        打包成 .dmg / .exe 的说明（未测试）
 ```
 
 ## License
