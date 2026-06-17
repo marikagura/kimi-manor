@@ -1,12 +1,12 @@
 # kimi-manor · 描金
 
-把 Claude Code 包进一间描金（Mucha · 新艺术）网页壳——暗色的桌面，裹着一个真实终端和一个四室
+把 Claude Code 包进一间描金网页壳：桌面裹着一个真实终端和一个四室
 「atelier」：**atelier · alcove · cabinet · ops**。全手绘金线 SVG，Cormorant Garamond + 宋体，
-昼 / 夜双肤。不用图标字体，能用隐喻的地方不放图表。（代号 `cc-gild`。）
+昼 / 夜双肤。不用图标字体，能用隐喻的地方不放图表。
 
 > 出厂即 placeholder 数据、离线可跑。接上你自己的端点，它就是实时的。
 
-随附的 `server.mjs` 还带四条可选 **live bridge**——真终端、**Salon**（Claude + GPT 两座）、
+随附的 `server.mjs` 还带四条可选 **live bridge**——真终端、**Salon**（Claude + GPT agent，可替代）、
 **Parlour** 语音——每条都门控在你自己的 key 后面，默认不联网，UI 也从不假设一个它渲染不了的后端。
 
 ## 单文件构建
@@ -29,7 +29,7 @@ node server.mjs                 # → http://localhost:7681/atelier
 
 `cc-gild-v7.html` 自包含——也可以直接双击打开。
 
-## 桌面 app（可选 · 未测试）
+## 桌面 app（可选）
 
 也能包成原生桌面 app：`npm run electron:dev` 开窗口，`npm run dist:mac` / `npm run dist:win`
 出 `.dmg` / `.exe`。Electron 壳是附加层（起 `server.mjs` + 原生窗口），web 壳照旧能用。
