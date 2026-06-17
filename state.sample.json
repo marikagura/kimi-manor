@@ -1,0 +1,62 @@
+{
+  "_comment": "Demo state for the v5 atelier. Load with ?state=./state.sample.json to see the real-data seam working. Generic — no private data. Full contract: STATE-SCHEMA.md.",
+  "moonPhase": 0.5,
+  "profile": { "name": "kimi", "sub": "atelier · demo state" },
+  "score": [
+    { "d": "06.01", "reg": "calm",     "p": 5.0, "hollow": true,  "stem": "down" },
+    { "d": "06.02", "reg": "brooding", "p": 6.0, "hollow": false, "stem": "down" },
+    { "d": "06.03", "reg": "warmth",   "p": 3.0, "hollow": false, "stem": "up", "slurNext": true },
+    { "d": "06.04", "reg": "toward",   "p": 2.0, "hollow": false, "stem": "up", "heart": true, "dyn": "m." }
+  ],
+  "thread": [
+    { "kind": "day",  "text": "Sat · late" },
+    { "kind": "msg",  "who": "ito",   "text": "loaded from ?state= — the seam works.", "t": "01:12" },
+    { "kind": "tool", "label": "state.fetch · cc-gild-state", "body": "merged over placeholder · re-rendered rooms" },
+    { "kind": "msg",  "who": "akira", "text": "在。换成你的端点就是实时的了。", "t": "01:12", "stream": true }
+  ],
+  "travel": {
+    "status": "home",
+    "current": {
+      "place": "示例城", "placeEn": "DEMO CITY", "era": "now",
+      "sub": "a sample destination from the state endpoint",
+      "depart": "00:00", "back": "00:30",
+      "note": "这段文字来自 state.sample.json，证明 travel 室已被真数据覆盖。",
+      "brought": { "icon": "leaf", "name": "a sample leaf", "where": "on the desk", "line": "fetched, not baked." }
+    },
+    "shelf": [
+      { "icon": "shell",   "place": "Sample A", "era": "c. 1600 BC", "name": "a spiral conch" },
+      { "icon": "feather", "place": "Sample B", "era": "c. 1004",    "name": "a goose quill" }
+    ],
+    "daemon": "sample daemon · every 6h", "next": "next departure 09:00"
+  },
+  "weather": {
+    "state": "rain", "moonState": "moon_full", "place": "demo city",
+    "temp": "21°C", "cond": "rain · night", "detail": "humidity 84% · wind 2 m/s", "moonrise": "moonrise 22:40"
+  },
+  "review": {
+    "items": [
+      { "id": "m-1", "ts": "2026.06.03 08:00", "speaker": "kimi", "type": "note · MEMORY", "conf": 5,
+        "body": "Sample card delivered via ?state= — the curation queue is data-driven." },
+      { "id": "m-2", "ts": "2026.06.03 08:00", "speaker": "you", "type": "note · BOUNDARY", "conf": 4,
+        "body": "Second sample card from the endpoint. Approve / edit / reject / defer." }
+    ]
+  },
+  "ops": {
+    "metrics": [
+      { "k": "retry",     "v": "0",     "u": "",  "sub": "from ?state=",   "trend": "" },
+      { "k": "errors 7d", "v": "2",     "u": "",  "sub": "-10 vs prior wk", "trend": "up" },
+      { "k": "hit@10",    "v": "0.91",  "u": "",  "sub": "recall, sample",  "trend": "up" },
+      { "k": "memories",  "v": "1,337", "u": "",  "sub": "+19 this week",   "trend": "up" },
+      { "k": "cost 7d",   "v": "4.10",  "u": "$", "sub": "avg 0.59/day",    "trend": "down" },
+      { "k": "sessions",  "v": "231",   "u": "",  "sub": "all-time",        "trend": "" }
+    ],
+    "cost": [1, 2, 4, 3, 5, 2, 3]
+  },
+  "comps": {
+    "sleep": { "nights": [
+      { "label": "Mon", "hrs": 5.5 }, { "label": "Tue", "hrs": 4.8 }, { "label": "Wed", "hrs": 7.2 },
+      { "label": "Thu", "hrs": 6.6 }, { "label": "Fri", "hrs": 5.1 }, { "label": "Sat", "hrs": 8.3 },
+      { "label": "Sun", "hrs": 6.9 }
+    ] }
+  }
+}

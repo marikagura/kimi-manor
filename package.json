@@ -1,0 +1,25 @@
+{
+  "name": "cc-gild",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "描金 — gilt web shell for Claude Code (xterm.js + Mucha frame + PWA)",
+  "author": "marikagura",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/marikagura/kimi-manor.git" },
+  "scripts": {
+    "start": "node server.mjs",
+    "shell": "SHELL_FALLBACK=1 node server.mjs",
+    "preview": "node serve.mjs",
+    "icons": "node scripts/make-icons.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "optionalDependencies": {
+    "node-pty": "^1.0.0",
+    "@anthropic-ai/claude-agent-sdk": "^0.3.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.0"
+  }
+}

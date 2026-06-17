@@ -1,0 +1,14 @@
+{
+  "moonPhase": 0.5,
+  "drive": { "strength": 0.72, "label": "presence (demo)", "backing": "sample · 42 signals over 14 days" },
+  "sleep": { "avg": "7.0", "note": "demo", "detail": "sample sleep summary" },
+  "debt": { "title": "Reminder", "body": "sample pending item", "sub": "placeholder description" },
+  "paper": { "name": "sample-project", "status": "demo · in progress" },
+  "memory": { "pending": 3, "note": "demo · recent writes" },
+  "ops": { "items": [
+    { "name": "service A", "ok": true, "v": "up" },
+    { "name": "service B", "ok": true, "v": "idle" },
+    { "name": "pty bridge", "ok": false, "v": "off" }
+  ] },
+  "now": { "weather": "clear", "temp": "22°C", "place": "demo city" }
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="night">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0806" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="kimi" />
+<title>kimi · atelier</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="apple-touch-icon" href="./icons/icon-180.png" />
+<link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,300;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* night (default) — overwritten by boot.js applyTheme() */
+  --bg: radial-gradient(ellipse at 50% 10%, #1a1612 0%, #0a0806 70%);
+  --void:#0a0806; --paper:#100c08; --ink:#f3e6cd;
+  --accent:#c19a56; --accent2:#8a9b6e; --mute:rgba(243,230,205,0.55);
+  --hair:rgba(193,154,86,0.38); --rose:#a86b6b;
+  --serif:"Cormorant Garamond","Noto Serif SC",serif;
+  --sbw:330px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--void);color:var(--ink);
+  font-family:var(--serif);overscroll-behavior:none}
+body{background:var(--bg);background-attachment:fixed}
+
+.app{display:grid;grid-template-columns:var(--sbw) 1fr;height:100dvh;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+
+/* mosaic corners */
+.corner{position:fixed;z-index:40;opacity:.6;pointer-events:none}
+.corner.tl{top:10px;left:10px}
+.corner.tr{top:10px;right:10px;transform:scaleX(-1)}
+
+/* ---------------- sidebar ---------------- */
+.sidebar{position:relative;display:flex;flex-direction:column;min-height:0;
+  border-right:0.6px solid var(--hair);overflow:hidden}
+.sb-scroll{flex:1;min-height:0;overflow-y:auto;padding:0 18px 18px}
+.sb-scroll::-webkit-scrollbar{width:5px}
+.sb-scroll::-webkit-scrollbar-thumb{background:var(--hair);border-radius:3px}
+
+/* hero: medallion + avatars + moon */
+.hero{padding:26px 0 8px;text-align:center;position:relative}
+.medallion{position:relative;width:150px;height:150px;margin:0 auto;color:var(--hair)}
+.medallion .avatars{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:-4px}
+.av{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;
+  font-size:24px;color:var(--accent);font-family:var(--serif);font-style:italic;
+  border:1px solid var(--accent);background:radial-gradient(circle at 36% 30%,#241c14,#0d0a07);
+  box-shadow:0 0 14px rgba(193,154,86,.2)}
+[data-theme="day"] .av{background:radial-gradient(circle at 36% 30%,#fff,#f2e3dc)}
+.av.b{margin-left:-8px}
+.moon{margin-top:14px;display:inline-block;line-height:0;cursor:pointer;
+  transition:transform .2s;animation:moonidle 90s linear infinite}
+.moon:hover{transform:scale(1.06)}
+@keyframes moonidle{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.moon{animation:none}}
+.vine{padding:10px 40px 4px;color:var(--hair)}
+.title{font-size:13px;letter-spacing:5px;color:var(--accent);font-style:italic;
+  text-align:center;margin:2px 0 14px;text-transform:none}
+
+/* room-style status cards */
+.card{position:relative;background:linear-gradient(180deg,var(--paper) 0%,transparent 140%);
+  border:0.6px solid var(--hair);padding:13px 14px 12px;margin-bottom:11px;overflow:hidden}
+.card .ped{position:absolute;top:0;left:0;right:0;color:var(--hair)}
+.card .rn{font-size:10px;letter-spacing:2px;color:var(--accent);font-style:italic;margin-top:5px}
+.card .name{font-size:21px;color:var(--ink);letter-spacing:.5px;font-weight:400;line-height:1.1;margin-top:1px}
+.card .sub{font-size:8px;letter-spacing:3px;color:var(--mute);margin-top:4px;text-transform:uppercase}
+.card .val{font-family:"Maple Mono","Fira Code",monospace;font-size:12.5px;color:var(--ink);
+  margin-top:9px;line-height:1.5;font-feature-settings:"tnum"}
+.card .val b{color:var(--accent);font-weight:500}
+.card .val .rose{color:var(--rose)}
+.card .meter{height:4px;background:rgba(0,0,0,.25);margin-top:8px;overflow:hidden;border:0.5px solid var(--hair)}
+.card .meter i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.card .rule{margin-top:9px;display:flex;align-items:center;gap:6px}
+.card .rule .ln{flex:1;height:0.5px;background:var(--hair)}
+.card .rule .ar{color:var(--accent);font-size:12px}
+
+.foot{border-top:0.6px solid var(--hair);padding:10px 18px;display:flex;
+  align-items:center;justify-content:space-between;
+  font-family:var(--serif);font-style:italic;font-size:13px;letter-spacing:2px}
+.foot a,.foot button{color:var(--ink);background:none;border:none;cursor:pointer;
+  font:inherit;letter-spacing:2px;opacity:.85;padding:4px 6px}
+.foot .clock{color:var(--mute);font-size:12px;letter-spacing:1px}
+
+/* ---------------- terminal pane ---------------- */
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
+.bar{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:0.6px solid var(--hair)}
+.bar .menu{display:none;background:none;border:0.6px solid var(--hair);color:var(--accent);
+  border-radius:6px;width:34px;height:31px;font-size:15px;cursor:pointer}
+.bar .ttl{font-family:var(--serif);font-style:italic;font-size:15px;letter-spacing:1px;color:var(--ink)}
+.bar .ttl .dim{color:var(--mute);font-style:normal;font-family:"Maple Mono","Fira Code",monospace;font-size:11px;letter-spacing:0}
+.bar .conn{margin-left:auto;font-family:"Maple Mono","Fira Code",monospace;font-size:11px;
+  display:flex;align-items:center;gap:6px;letter-spacing:.5px}
+.bar .conn .s{width:7px;height:7px;border-radius:50%;background:var(--mute)}
+.bar .conn.live{color:var(--accent2)} .bar .conn.live .s{background:var(--accent2);box-shadow:0 0 8px var(--accent2)}
+.bar .conn.dead{color:var(--rose)} .bar .conn.dead .s{background:var(--rose)}
+.termwrap{flex:1;min-height:0;position:relative;padding:12px 14px 6px}
+#term{height:100%}
+.termwrap::before{content:"";position:absolute;left:14px;right:14px;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--hair),transparent)}
+
+/* ---------------- mobile ---------------- */
+@media (max-width:760px){
+  :root{--sbw:0px}
+  .app{grid-template-columns:1fr}
+  .bar .menu{display:block}
+  .sidebar{position:fixed;z-index:60;top:0;bottom:0;left:0;width:min(88vw,340px);
+    background:var(--bg);transform:translateX(-103%);
+    transition:transform .26s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 48px #000}
+  .sidebar.open{transform:translateX(0)}
+  .scrim{position:fixed;inset:0;background:#000;opacity:0;visibility:hidden;
+    transition:opacity .26s;z-index:55}
+  .scrim.show{opacity:.55;visibility:visible}
+}
+</style>
+</head>
+<body>
+<div class="corner tl" id="cornerTL"></div>
+<div class="corner tr" id="cornerTR"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-scroll">
+      <div class="hero">
+        <div class="medallion" id="medallion">
+          <div class="avatars"><div class="av">kimi</div><div class="av b">you</div></div>
+        </div>
+        <div class="moon" id="moon" title="今天的月相 · 点开聊天"></div>
+      </div>
+      <div class="vine" id="vine"></div>
+      <div class="title">ATELIER · 工作台</div>
+      <div id="cards"></div>
+    </div>
+    <div class="foot">
+      <span class="clock" id="clock">--:--</span>
+      <button id="themeBtn" title="昼夜切换">夜</button>
+      <a id="refresh" title="刷新状态">↻</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="bar">
+      <button class="menu" id="menuBtn" aria-label="menu">☰</button>
+      <span class="ttl">atelier <span class="dim" id="ptyPath">~ /Documents · claude</span></span>
+      <span class="conn dead" id="conn"><span class="s"></span><span id="connTxt">未连接</span></span>
+    </div>
+    <div class="termwrap"><div id="term"></div></div>
+  </main>
+  <div class="scrim" id="scrim"></div>
+</div>
+
+<style>
+  /* bare mode (?bare=1): terminal only — for embedding inside the manor's atelier panel */
+  body.bare .app{grid-template-columns:1fr}
+  body.bare .sidebar,body.bare .scrim,body.bare #menuBtn{display:none!important}
+  body.bare .bar{padding-left:16px}
+</style>
+<script>(function(){var p=new URLSearchParams(location.search);var embedded=false;try{embedded=window.self!==window.top;}catch(_){embedded=true;}if(p.get('bare')==='1'||embedded)document.body.classList.add('bare');})();</script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links@0.11.0/lib/addon-web-links.min.js"></script>
+<script type="module" src="./boot.js"></script>
+</body>
+</html>

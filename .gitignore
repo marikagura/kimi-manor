@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+*.log
+cc-gild-v5-dayrose.html
+avatars
+.env
+.env.*

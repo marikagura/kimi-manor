@@ -1,0 +1,359 @@
+/* v4.css — cc-gild v4 · full-screen draggable Mucha panels + casement windows.
+   Loads ON TOP of v2.css (reuses tokens + convo/score/rcard/profile/medallion). */
+
+body{overflow:hidden}
+.stage{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* full-screen panel canvas */
+.canvas{flex:1;min-height:0;position:relative;overflow:hidden}
+.grid{position:absolute;inset:0;display:grid;grid-template-columns:292px minmax(0,1fr) 408px;gap:16px;padding:16px;overflow:auto}
+.col{display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0}
+.col.center{overflow:hidden}
+.col.right{overflow-y:auto;padding-right:3px}
+.col.left{overflow-y:auto;padding-right:3px}
+
+/* ---- panel (beautiful Mucha-framed, draggable) ---- */
+.panel{position:relative;border:0.7px solid var(--hair);border-radius:11px;min-height:0;
+  background:linear-gradient(180deg,var(--panel),rgba(12,9,6,0.32));backdrop-filter:blur(3px);
+  display:flex;flex-direction:column;
+  box-shadow:0 1px 0 rgba(255,240,210,0.04) inset, 0 16px 42px -26px rgba(0,0,0,0.85)}
+[data-theme="day"] .panel{box-shadow:0 1px 0 rgba(255,255,255,0.5) inset,0 16px 42px -28px rgba(120,60,70,0.3)}
+.panel.flex{flex:1;min-height:0}
+.panel.dragging{z-index:80;box-shadow:0 34px 90px -26px #000;cursor:grabbing}
+.panel>.ped{position:absolute;top:0;left:0;right:0;color:var(--hair);opacity:.8;pointer-events:none;z-index:1}
+.ph{display:flex;align-items:center;gap:10px;padding:11px 15px 10px;cursor:grab;flex:0 0 auto;border-bottom:0.6px solid var(--hair2)}
+.ph .lbl{font-family:var(--serif);font-style:italic;font-size:14.5px;letter-spacing:.04em;color:var(--ink)}
+.ph .en{font-family:var(--serif);font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--mute);align-self:center}
+.ph .grip{margin-left:auto;display:flex;gap:3px;opacity:.55}
+.ph .grip i{width:3px;height:3px;border-radius:50%;background:var(--accent);display:block}
+.pbody{padding:14px;overflow:auto;flex:1;min-height:0}
+.pbody.tight{padding:11px 13px}
+
+/* ---- casement window (door/window switch) ---- */
+.view-frame{position:relative;height:212px;flex:0 0 auto;overflow:hidden;perspective:1100px;background:#080604;border-bottom:0.7px solid var(--hair);
+  box-shadow:inset 0 0 0 1px var(--hair2), inset 0 0 34px -6px rgba(0,0,0,.75)}
+.view{position:absolute;inset:0}
+.view svg{width:100%;height:100%;display:block}
+/* glass sheen + gilt inner casing over the opening */
+.view-frame::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:linear-gradient(116deg,rgba(255,242,214,.10),transparent 38%),radial-gradient(130% 90% at 50% 0,transparent 62%,rgba(0,0,0,.45))}
+.crn-fl{position:absolute;z-index:4;color:var(--accent);opacity:.6;pointer-events:none}
+
+/* framed masked window (v4.1–4.3 black-gold windows) */
+.view-frame.fwin{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 120% 80% at 50% 26%,#161009,#0a0705)}
+.fw-win{position:relative;height:100%;aspect-ratio:168/252;overflow:hidden;border-radius:2px;box-shadow:0 10px 34px -16px #000}
+.fw-win .fw-scene{position:absolute;inset:0}
+.fw-win .fw-scene svg{width:100%;height:100%;display:block}
+.fw-win .fw-veil{position:absolute;inset:0;background:#0b0710;opacity:.86;transition:opacity .8s ease}
+.casement.open .fw-veil{opacity:0}
+.fw-win .frame{position:absolute;inset:0;width:100%;height:100%;color:var(--accent)}
+.fwin .latch{z-index:6}
+.crn-fl.tl{top:5px;left:5px}.crn-fl.tr{top:5px;right:5px;transform:scaleX(-1)}
+.shutters{position:absolute;inset:0;z-index:2;transform-style:preserve-3d}
+.sh{position:absolute;top:0;bottom:0;width:50.4%;transition:transform 1.15s cubic-bezier(.55,0,.18,1);
+  backface-visibility:hidden;background:linear-gradient(100deg,#191208,#0e0a06)}
+[data-theme="day"] .sh{background:linear-gradient(100deg,#efe2d8,#e6d4c8)}
+.sh.l{left:0;transform-origin:left center;box-shadow:inset -10px 0 24px -16px #000}
+.sh.r{right:0;transform-origin:right center;box-shadow:inset 10px 0 24px -16px #000}
+.sh svg{width:100%;height:100%;display:block;color:var(--hair)}
+.casement.open .sh.l{transform:rotateY(-114deg)}
+.casement.open .sh.r{transform:rotateY(114deg)}
+.latch{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;width:48px;height:48px;border-radius:50%;
+  border:0.9px solid var(--accent);background:radial-gradient(circle at 40% 34%,#2a2014,#0d0a07);color:var(--accent);cursor:pointer;
+  display:grid;place-items:center;font-size:18px;transition:opacity .4s .82s,box-shadow .3s;box-shadow:0 0 20px rgba(200,164,94,.28)}
+.latch:hover{box-shadow:0 0 30px rgba(200,164,94,.5)}
+.casement.open .latch{opacity:0;pointer-events:none;transition:opacity .25s 0s}
+.reclose{position:absolute;right:11px;top:11px;z-index:7;width:29px;height:29px;border-radius:50%;border:0.6px solid var(--hair2);
+  background:rgba(10,7,5,.55);color:var(--accent);cursor:pointer;opacity:0;transition:opacity .25s 0s;font-size:13px}
+.casement.open .reclose{opacity:1;transition:opacity .4s .82s}
+.view-hint{position:absolute;left:0;right:0;bottom:10px;text-align:center;z-index:4;pointer-events:none;
+  font-family:var(--serif);font-style:italic;font-size:11px;letter-spacing:1px;color:var(--mute);transition:opacity .4s .82s}
+.casement.open .view-hint{opacity:0;transition:opacity .25s 0s}
+
+/* ---- travel sill / brought-back / shelf ---- */
+.sill{padding:14px 16px;border-bottom:0.6px solid var(--hair2)}
+.sill .jrow{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.sill .place{font-family:var(--cjk);font-weight:500;font-size:23px;letter-spacing:.04em}
+.sill .place .pen{font-family:var(--serif);font-size:10px;letter-spacing:.3em;color:var(--mute);text-transform:uppercase;margin-left:8px}
+.sill .era{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--accent);white-space:nowrap}
+.sill .sub{font-family:var(--cjk);font-size:12px;color:var(--mute);margin-top:4px}
+.sill .note{font-family:var(--cjk);font-size:13px;line-height:1.8;color:var(--ink2);margin-top:13px;border-left:2px solid var(--hair);padding-left:13px}
+.brought{display:flex;gap:13px;padding:14px 16px;align-items:flex-start;border-bottom:0.6px solid var(--hair2)}
+.brought .icn{flex:0 0 auto;width:48px;height:48px;border-radius:9px;border:0.6px solid var(--hair);display:grid;place-items:center;color:var(--accent);background:radial-gradient(circle at 40% 30%,#1e160d,#0c0906)}
+.brought .icn svg{width:26px;height:26px}
+.brought .bn{font-family:var(--cjk);font-weight:500;font-size:15px}
+.brought .bw{font-family:var(--serif);font-style:italic;font-size:11px;color:var(--accent);margin-left:7px}
+.brought .bl{font-family:var(--cjk);font-size:12px;color:var(--mute);line-height:1.62;margin-top:6px}
+.shelf-mantel{padding:13px 14px 6px}
+.shelf-mantel .mh{font-family:var(--serif);font-size:9px;letter-spacing:.34em;text-transform:uppercase;color:var(--mute);margin-bottom:11px}
+.shelf-row{display:flex;gap:9px;overflow-x:auto;padding-bottom:6px}
+.shelf-row::-webkit-scrollbar{height:0}
+.sv{flex:0 0 auto;width:80px;text-align:center}
+.sv .icn{width:50px;height:50px;margin:0 auto;border-radius:9px;border:0.6px solid var(--hair2);display:grid;place-items:center;color:var(--accent);background:rgba(255,240,210,.02)}
+.sv .icn svg{width:26px;height:26px}
+.sv .sp{font-family:var(--cjk);font-size:11px;margin-top:7px;color:var(--ink2);line-height:1.3}
+.sv .se{font-family:var(--mono);font-size:8px;color:var(--faint)}
+.daemon-note{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:9.5px;color:var(--faint);letter-spacing:.3px;padding:10px 16px 14px}
+.daemon-note .nx{color:var(--accent)}
+.travel-status{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--sage);border:0.6px solid var(--hair2);border-radius:99px;padding:2px 9px}
+
+/* ---- weather casement ---- */
+.wreadout{padding:15px 17px;display:flex;align-items:center;gap:17px}
+.wtemp{font-family:var(--serif);font-size:46px;color:var(--ink);font-feature-settings:"onum" 1;line-height:.9}
+.wmeta{font-family:var(--cjk);font-size:13.5px;color:var(--ink2);line-height:1.5}
+.wmeta b{color:var(--accent);font-weight:500}
+.wmeta .dim{color:var(--mute);font-size:11px;font-family:var(--mono)}
+
+/* ---- brand sigil: dark JPG in night, inline gold/rose Mucha fox emblem in day.
+   The sigil JPG carries a black ground that reads as a black square on light
+   paper, so in day we hide it and draw a hairline fox medallion (~21px) in the
+   --accent (rose in day) hue instead. Night keeps the JPG. ---- */
+.menubar .brand .brand-emblem{display:none}
+.menubar .brand .brand-emblem{width:22px;height:22px;background-color:var(--accent);opacity:.95;flex:0 0 auto;-webkit-mask:url('assets/entry-motion.png') center/contain no-repeat;mask:url('assets/entry-motion.png') center/contain no-repeat}
+[data-theme="day"] .menubar .brand .brand-jpg{display:none}
+[data-theme="day"] .menubar .brand .brand-emblem{display:block}
+
+/* ---- profile: no panel base/frame at all; the k+y "photo" floats with its
+       Mucha medallion ornament behind it (the small decoration), no box ---- */
+.panel.profile-frameless{border:none;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+/* day theme re-paints .panel background (higher cascade order) — override it so
+   the profile has NO base in day either, not just night */
+[data-theme="day"] .panel.profile-frameless{background:none}
+.panel.profile-frameless>.ped{display:none}
+.panel.profile-frameless>.ph{border-bottom:none;padding:6px 12px 0;background:none}
+.panel.profile-frameless .pbody{padding:4px 14px 14px}
+.panel.profile-frameless .medwrap{color:var(--hair)}
+.panel.profile-frameless .av{width:72px;height:72px;font-size:32px;border-width:1px;box-shadow:0 0 22px rgba(200,164,94,.22)}
+.panel.profile-frameless .av.b{margin-left:-16px}
+
+/* ---- generic frameless panel — for content that is its OWN frame (the casement
+       window draws its own tracery; the opus sheet is a bare score). No card box,
+       no header tab; a minimal grip stays so the panel is still draggable. ---- */
+.panel.frameless{border:none;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+[data-theme="day"] .panel.frameless{background:none}
+.panel.frameless>.ped{display:none}
+.panel.frameless>.ph{border-bottom:none;background:none;padding:5px 12px 0;min-height:0}
+.panel.frameless>.ph .lbl,.panel.frameless>.ph .en,.panel.frameless>.ph .travel-status{display:none}
+.panel.frameless>.pbody{padding-top:6px}
+
+/* ---- menubar 开窗 switch ---- */
+.winsw{display:flex;align-items:center;gap:7px;border:0.6px solid var(--hair);border-radius:99px;padding:4px 13px 4px 9px;
+  background:rgba(200,164,94,0.05);color:var(--accent);cursor:pointer;font-family:var(--serif);font-style:italic;font-size:13px;letter-spacing:.5px}
+.winsw:hover{background:rgba(200,164,94,0.1)}
+.winsw .ic{font-size:14px}
+
+/* statusbar restored content */
+.statusbar .play{display:flex;align-items:center;gap:8px}
+
+@media (max-width:1080px){
+  .grid{grid-template-columns:1fr;overflow:auto}
+  .col.center{overflow:visible;height:auto}
+  .col.center .convo{height:600px}
+  .weather-pet{top:46px;right:14px;width:64px}
+  .weather-pet .pet{width:64px}
+}
+
+/* ---- panel resize handle (SE corner) ---- */
+.rsz{position:absolute;right:2px;bottom:2px;width:16px;height:16px;cursor:nwse-resize;z-index:9;opacity:.5;
+  background:linear-gradient(135deg,transparent 55%,var(--hair) 55%,var(--hair) 66%,transparent 66%,transparent 78%,var(--hair) 78%,var(--hair) 89%,transparent 89%)}
+.rsz:hover{opacity:.95}
+
+/* ---- weather pet — frameless hanging svg (桌宠), no panel chrome ---- */
+.weather-pet{position:absolute;top:52px;right:28px;z-index:40;width:84px;color:var(--accent);
+  filter:drop-shadow(0 0 10px rgba(193,154,86,.22))}
+.weather-pet .pet{width:84px;height:auto;display:block;overflow:visible}
+.weather-forecast{position:absolute;top:158px;right:22px;z-index:41;min-width:150px;max-width:208px;
+  border:0.6px solid var(--hair);border-radius:10px;background:rgba(12,9,6,0.92);backdrop-filter:blur(8px);
+  padding:12px 15px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:.25s;box-shadow:0 16px 40px -20px #000}
+.weather-forecast.open{opacity:1;transform:translateY(0);pointer-events:auto}
+.weather-forecast .wf-temp{font-family:var(--serif);font-size:34px;color:var(--ink);line-height:.9;font-feature-settings:"onum" 1}
+.weather-forecast .wf-meta{font-family:var(--cjk);font-size:12.5px;color:var(--ink2);line-height:1.6;margin-top:8px}
+.weather-forecast .wf-meta b{color:var(--accent);font-weight:500}
+.weather-forecast .wf-meta .dim{color:var(--mute);font-size:10.5px;font-family:var(--mono)}
+[data-theme="day"] .weather-forecast{background:rgba(255,251,248,0.95)}
+
+/* ---- weather glyph animations (from design weather pack) ---- */
+@keyframes wx-spin{to{transform:rotate(360deg)}}
+.spin{animation:wx-spin 26s linear infinite;transform-box:fill-box}
+.spin-fast{animation:wx-spin 7s linear infinite;transform-box:fill-box}
+@keyframes wx-pulse{0%,100%{opacity:.5;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
+.pulse{animation:wx-pulse 3.6s ease-in-out infinite;transform-box:fill-box}
+@keyframes wx-drift{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+.drift{animation:wx-drift 5.5s ease-in-out infinite;transform-box:fill-box}
+@keyframes wx-drop{0%{transform:translateY(-7px);opacity:0}25%{opacity:1}100%{transform:translateY(15px);opacity:0}}
+.drop{animation:wx-drop 1.5s linear infinite;animation-delay:var(--d,0s);transform-box:fill-box}
+@keyframes wx-twinkle{0%,100%{opacity:.15;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.tw{animation:wx-twinkle 2.8s ease-in-out infinite;animation-delay:var(--d,0s);transform-box:fill-box}
+@keyframes wx-flash{0%,90%,100%{opacity:.1}93%,97%{opacity:1}}
+.flash{animation:wx-flash 2.6s ease-in-out infinite;transform-box:fill-box}
+@keyframes wx-fog{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+.fog{animation:wx-fog 4.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-box:fill-box}
+@keyframes wx-leaf{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(-4px,5px) rotate(45deg)}100%{transform:translate(0,0) rotate(0)}}
+.leaf{animation:wx-leaf 3s ease-in-out infinite;animation-delay:var(--d,0s);transform-box:fill-box}
+@keyframes wx-sway{0%,100%{transform:rotate(-2.6deg)}50%{transform:rotate(2.6deg)}}
+.sway{animation:wx-sway 6s ease-in-out infinite;transform-origin:60px 12px;transform-box:view-box}
+@media (prefers-reduced-motion:reduce){.spin,.spin-fast,.pulse,.drift,.drop,.tw,.flash,.fog,.leaf,.sway{animation:none}}
+
+/* ---- day mode: kill hardcoded black backgrounds → rose-gothic paper ---- */
+[data-theme="day"] .panel{background:linear-gradient(180deg,var(--panel),rgba(255,255,255,0.22))}
+[data-theme="day"] .view-frame.fwin{background:radial-gradient(ellipse 120% 80% at 50% 26%,#f3e7df,#e7d6cc)}
+[data-theme="day"] .fw-win .fw-veil{background:#e7d6cc}
+[data-theme="day"] .brought .icn,[data-theme="day"] .latch{background:radial-gradient(circle at 40% 30%,#fffdfb,#efe2d8)}
+[data-theme="day"] .sv .icn{background:rgba(160,77,66,0.05)}
+[data-theme="day"] .av{background:radial-gradient(circle at 36% 30%,#fffdfb,#f0e4da)}
+[data-theme="day"] .av.b{background:radial-gradient(circle at 36% 30%,#fff,#f6e6e7)}
+/* conversation avatars (.ava — the k / y circles) carry a dark radial bg from
+   v2.css that reads near-black on light paper. Give them a light paper radial in
+   day: kimi = gold-tinted cream, you = rose-tinted cream; letter stays the
+   accent/rose stroke colour so it's still legible. */
+[data-theme="day"] .msg.akira .ava{background:radial-gradient(circle at 35% 30%,#fffaf2,#f1e6d6)}
+[data-theme="day"] .msg.ito .ava{background:radial-gradient(circle at 35% 30%,#fff6f4,#f6e3e4)}
+[data-theme="day"] .reclose{background:rgba(255,251,248,0.6)}
+[data-theme="day"] .weather-pet{filter:drop-shadow(0 0 8px rgba(168,80,94,0.20))}
+/* casement chrome → light paper in day (frame, surround mask, shutters, base) */
+[data-theme="day"] .view-frame{background:radial-gradient(ellipse 120% 80% at 50% 18%,#f6ebe4,#e9d8ce)}
+[data-theme="day"] .view-frame::before{background:linear-gradient(116deg,rgba(255,255,255,.45),transparent 38%),radial-gradient(130% 90% at 50% 0,transparent 62%,rgba(150,90,100,.18))}
+[data-theme="day"] .fw-surround{fill:#ead9cf}
+[data-theme="day"] .sh.l{box-shadow:inset -10px 0 24px -16px rgba(120,70,80,.4)}
+[data-theme="day"] .sh.r{box-shadow:inset 10px 0 24px -16px rgba(120,70,80,.4)}
+/* day-mode casement: frame must sit FLUSH with the scene — one light wall, no
+   grey gap/edge. The night theme uses a dark inset vignette + a #000 drop shadow
+   on the window block + a dark radial fwin ground; in day those read as a grey
+   layered seam behind the paper surround. Unify every casement layer to one warm
+   paper tone (#ead9cf, matching .fw-surround) and warm the shadows. */
+[data-theme="day"] .view-frame{box-shadow:inset 0 0 0 1px var(--hair2),inset 0 0 34px -10px rgba(150,90,100,.16)}
+[data-theme="day"] .view-frame.fwin{background:#ead9cf}
+[data-theme="day"] .fw-win{box-shadow:0 8px 26px -20px rgba(122,46,60,.4)}
+[data-theme="day"] .fw-win .fw-veil{background:#ead9cf}
+/* memory review single card → light rose paper, not black/grey */
+[data-theme="day"] .rcard{background:linear-gradient(180deg,rgba(255,250,246,0.66),rgba(246,230,225,0.5))}
+
+/* ---- memory review: wax-seal double-ring buttons (canon WaxSeal) ---- */
+.rcard .acts{gap:8px}
+.rcard .ring{background:radial-gradient(circle at 50% 38%,rgba(193,154,86,.12),rgba(0,0,0,.16));
+  box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--hair)}
+.rcard .ring.ok{box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--accent)}
+.rcard .ring.no{box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--hair2)}
+.rcard .ring.no:hover{box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--rose)}
+[data-theme="day"] .rcard .ring{background:radial-gradient(circle at 50% 38%,rgba(160,77,66,.10),rgba(255,255,255,.4));
+  box-shadow:inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--hair)}
+[data-theme="day"] .rcard .ring.ok{box-shadow:inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--accent)}
+/* seal glyph buttons: 4 across (approve · edit · reject · defer), hairline-gold inline SVG */
+.rcard .ring.seal{width:32px;height:32px;color:var(--accent)}
+.rcard .ring.seal svg{display:block;width:13px;height:13px}
+.rcard .ring.edit{box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--hair)}
+.rcard .ring.back{box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--hair2);color:var(--mute)}
+.rcard .ring.back:hover{color:var(--accent);box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--hair)}
+.rcard .ring.no{color:var(--mute)}
+.rcard .ring.no:hover{color:var(--rose)}
+[data-theme="day"] .rcard .ring.edit{box-shadow:inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--hair)}
+[data-theme="day"] .rcard .ring.no,[data-theme="day"] .rcard .ring.back{box-shadow:inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--hair2)}
+
+/* ============================================================
+   v5 — workspace tabs + dense/quiet layouts + ops panels
+   ============================================================ */
+
+/* tab chips with hairline-gold glyph */
+.tabs .tab{display:inline-flex;align-items:center;gap:7px}
+.tab .tg{display:inline-flex;width:15px;height:15px;color:var(--accent);opacity:.62;line-height:0;transition:opacity .18s}
+.tab .tg svg{width:15px;height:15px;display:block}
+.tab:hover .tg{opacity:.85}
+.tab.on .tg{opacity:1}
+.tab.drop-target{color:var(--accent);border-color:var(--accent);background:rgba(193,154,86,0.14)}
+.tab.drop-target .tg{opacity:1}
+/* while a panel is dragged its titlebar holds pointer capture, so making the
+   panel transparent to hit-testing lets elementFromPoint see tab chips beneath */
+.panel.dragging{pointer-events:none}
+
+/* workspaces — only the active one is laid out */
+.ws{position:absolute;inset:0;display:none}
+.ws.on{display:block}
+
+/* ---- frameless floating draggable widget (like #weather-pet) ----
+   No panel header, no border, no panel background — just the comp content in a
+   bare container, freely draggable by pointer (see wireFloat() in v4-app.js).
+   Position is set to fixed (viewport space) by wireFloat() — same stable origin
+   as #weather-pet — so the drag math can never escape the screen; the widget is
+   clamped into the viewport on every move. The widget still lives inside its
+   tab's .ws workspace, so it shows/hides with that tab. */
+.float-widget{position:fixed;z-index:45;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.float-widget.dragging{cursor:grabbing;z-index:62}
+.float-widget>*{cursor:auto}
+
+/* composer mic/send → gold hairline svg */
+.composer .mic svg{width:19px;height:19px;display:block}
+.composer .send svg{width:19px;height:19px;display:block}
+.composer .send{color:#1a1208}
+.composer .mic.rec{color:var(--rose)}
+
+/* ---- ops dashboard layouts ---- */
+.grid-ops{grid-template-columns:316px minmax(0,1fr) 316px}
+.grid-cabinet{grid-template-columns:330px minmax(0,1fr) 360px}
+.grid-alcove{grid-template-columns:300px minmax(0,1fr);max-width:1180px;margin:0 auto;gap:48px;padding:48px 32px}
+.alcove-main{justify-content:center}
+.alcove-aside{justify-content:flex-start;gap:32px}
+
+/* metric tiles */
+.ops-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:14px;padding:4px 2px 10px}
+.ops-tile{border:0.6px solid var(--hair2);border-radius:10px;padding:15px 16px 14px;position:relative;
+  background:linear-gradient(180deg,rgba(255,240,210,0.03),transparent)}
+.ops-tile .ot-k{font-family:var(--serif);font-style:italic;font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--mute)}
+.ops-tile .ot-v{font-family:var(--serif);font-size:38px;line-height:1;color:var(--ink);margin-top:8px;
+  font-feature-settings:'onum' 1;font-variant-numeric:oldstyle-nums}
+.ops-tile .ot-v .u{font-size:15px;color:var(--accent);font-style:italic;margin-left:3px}
+.ops-tile .ot-sub{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:7px;letter-spacing:.4px}
+.ops-tile .ot-sub.up{color:var(--sage)}.ops-tile .ot-sub.down{color:var(--rose)}
+.ops-sec-h{font-family:var(--serif);font-style:italic;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--mute);margin:18px 0 10px;display:flex;align-items:center;gap:10px}
+.ops-sec-h::after{content:"";flex:1;height:0;border-top:0.6px solid var(--hair2)}
+/* sparkline-ish cost bars */
+.ops-bars{display:flex;align-items:flex-end;gap:6px;height:54px;padding:6px 2px 0}
+.ops-bars .b{flex:1;background:linear-gradient(180deg,var(--accent),var(--accent-d));border-radius:2px 2px 0 0;opacity:.7;min-height:3px}
+.ops-bars .b:last-child{opacity:1}
+.ops-barx{display:flex;gap:6px;font-family:var(--mono);font-size:8px;color:var(--faint);margin-top:5px}
+.ops-barx span{flex:1;text-align:center}
+
+/* ---- connection / passkey list rows ---- */
+.conn-list,.key-list{display:flex;flex-direction:column}
+.conn-row,.key-row{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:0.5px solid var(--hair2)}
+.conn-row:last-child,.key-row:last-child{border-bottom:none}
+.conn-ic{flex:0 0 auto;width:36px;height:36px;border-radius:9px;border:0.6px solid var(--hair2);display:grid;place-items:center;
+  color:var(--accent);background:radial-gradient(circle at 40% 30%,rgba(255,240,210,0.05),transparent)}
+.conn-ic svg{width:19px;height:19px}
+.conn-main{flex:1;min-width:0}
+.conn-name{font-family:var(--cjk);font-size:14px;color:var(--ink2)}
+.conn-sub{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:3px;letter-spacing:.3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conn-st{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-family:var(--serif);font-style:italic;
+  font-size:11px;color:var(--mute);letter-spacing:.4px}
+.st-dot{width:7px;height:7px;border-radius:50%;background:var(--sage);box-shadow:0 0 6px var(--sage)}
+.st-dot.warn{background:var(--accent);box-shadow:0 0 6px rgba(193,154,86,.5)}
+.st-dot.off{background:var(--rose-d);box-shadow:none;opacity:.7}
+.key-code{font-family:var(--mono);font-size:12.5px;color:var(--ink2);letter-spacing:1.5px}
+.key-tag{font-family:var(--serif);font-style:italic;font-size:10px;color:var(--accent);border:0.5px solid var(--hair2);
+  border-radius:99px;padding:2px 9px;letter-spacing:.4px}
+.key-note{font-family:var(--mono);font-size:9px;color:var(--faint);padding:11px 4px 2px;letter-spacing:.3px;line-height:1.6}
+
+/* ============ day-rose · gilt linework (玫瑰场 + 金叶) ============
+   昼模式不改 token 色场(仍是原生玫瑰)，只让选定的线条元素走 --gilt 金，
+   让金箔在玫瑰场里透出来而不抢戏。夜模式不受影响([data-theme=day] 作用域)。*/
+[data-theme="day"] #medallion svg{color:var(--gilt) !important}                 /* 徽章环(中心点仍玫瑰) */
+[data-theme="day"] .corner svg{color:var(--gilt) !important}                    /* 四角马赛克 */
+[data-theme="day"] [data-ped] svg{color:color-mix(in oklab,var(--gilt) 60%,transparent) !important} /* 面板顶山墙线 */
+[data-theme="day"] .fw-win .frame{color:var(--gilt) !important}                 /* casement 窗棂 */
+[data-theme="day"] .crn-fl,[data-theme="day"] .crn-fl svg{color:var(--gilt) !important} /* 窗角花 */
+[data-theme="day"] .latch,[data-theme="day"] .latch svg{color:var(--gilt) !important}   /* 窗闩 */
+[data-theme="day"] .tabs .tab.on{color:var(--gilt-d) !important}               /* 当前 tab */
+[data-theme="day"] .winsw,[data-theme="day"] .menubar .brand .mk{color:color-mix(in oklab,var(--gilt-d) 85%,transparent) !important}
+[data-theme="day"] .rcard .ring.ok{box-shadow:inset 0 0 0 3px var(--paper),inset 0 0 0 4px var(--gilt) !important} /* 记忆 approve 环 */
+[data-theme="day"] .rcard .ring.ok .seal,[data-theme="day"] .ring.ok{color:var(--gilt-d) !important}
+[data-theme="day"] .rule .ar,[data-theme="day"] .deskrow .ar,[data-theme="day"] .mroom .ar{color:var(--gilt) !important} /* → 箭头 */
+[data-theme="day"] .rule .ln{background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--gilt) 50%,transparent),transparent) !important}
+/* ops · austere 控制台:金只点发丝/标签/单位/末柱，数字留 ink，状态点留语义 */
+[data-theme="day"] .ops-bars .b{background:rgba(120,98,72,0.24) !important;opacity:1}     /* 成本柱 → 安静暖灰 */
+[data-theme="day"] .ops-bars .b:last-child{background:color-mix(in oklab,var(--gilt) 45%,transparent) !important} /* 末柱(当前) → 轻金 */
+[data-theme="day"] .ops-tile .ot-v .u{color:var(--gilt-d) !important}          /* 单位 $ */
+[data-theme="day"] .ops-sec-h{color:var(--gilt-d) !important}
+[data-theme="day"] .ops-sec-h::after{border-top-color:color-mix(in oklab,var(--gilt) 50%,transparent) !important}
+[data-theme="day"] .key-tag{color:var(--gilt-d) !important;border-color:color-mix(in oklab,var(--gilt) 45%,transparent) !important}
+[data-theme="day"] .conn-ic{border-color:color-mix(in oklab,var(--gilt) 40%,transparent) !important}
