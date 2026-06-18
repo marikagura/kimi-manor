@@ -3,7 +3,7 @@
 const CACHE = 'cc-gild-v3';
 const SHELL = [
   './', './index.html', './boot.js', './theme.js', './mucha.js',
-  './manifest.webmanifest', './icons/icon.svg',
+  './manifest.webmanifest', './icons/icon.png',
 ];
 
 self.addEventListener('install', (e) => {
