@@ -21,13 +21,16 @@ npm run electron:dev   # 用系统 node 起 server.mjs，开窗口
 ## 打包 .dmg / .exe
 
 ```bash
-npm run icons          # 可选：从 fox 印记生成 icon.icns / icon.ico（要 sharp）
 npm run dist:mac       # → dist/  里的 cc-gild-*.dmg   (macOS)
 npm run dist:win       # → dist/  里的 cc-gild Setup *.exe   (Windows · nsis)
 ```
 
 `dist:mac` 带了 `CSC_IDENTITY_AUTO_DISCOVERY=false`，跳过代码签名（出无签名包，本地 / 自用够了；
 要分发给别人再单独配签名 / 公证）。
+
+**App 图标**用 `build/icon.png`（描金狐狸，从 `public/icons/icon.svg` 烤的 1024px）——electron-builder
+自动转成 mac 的 `.icns` 和 win 的 `.ico`，不用手动生成。换图标就替掉 `build/icon.png`（≥512px）。
+（`npm run icons` 是另一回事，生成 PWA 用的 `public/icons/icon-*.png`，跟桌面 app 图标无关。）
 
 ## 唯一需要留意的：打包后的原生模块
 
