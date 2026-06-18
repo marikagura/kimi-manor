@@ -5430,12 +5430,12 @@ window.Comp.radio = function (el) {
   }
 
   /* ====================== real-data seam ======================
-   * Public build ships the inlined placeholder (data.js / v4-data.js / v2-data.js).
-   * With NO ?state=, nothing is fetched — the demo renders as-is (open-source safe,
-   * works under file://). A private deploy passes ?state=<endpoint> (or sets
-   * localStorage 'cc-gild-state-url') to fetch real data shaped per STATE-SCHEMA.md;
-   * the placeholder is always the fallback. ?events=<sse-url> subscribes for
-   * push-on-change reactivity (re-fetch + re-render the rooms). Schema: STATE-SCHEMA.md. */
+   * The public build inlines the placeholder demo directly in this file. With NO
+   * ?state=, nothing is fetched — the demo renders as-is (open-source safe, works
+   * under file://). A deploy passes ?state=<endpoint> (or sets localStorage
+   * 'cc-gild-state-url') to fetch real data shaped per STATE-SCHEMA.md, and/or serves
+   * this file from server.mjs for the live /state WebSocket push. The placeholder is
+   * always the fallback. Schema: STATE-SCHEMA.md. */
   const PARAMS = new URLSearchParams(location.search);
   const STATE_URL  = PARAMS.get('state')  || localStorage.getItem('cc-gild-state-url')  || '';
   function applyState(s){
@@ -5450,9 +5450,9 @@ window.Comp.radio = function (el) {
     if(s.review && Array.isArray(s.review.items)) V.REVIEW.items = s.review.items;
     // ops dashboard (metrics / cost / conns / keys)
     if(s.ops){ ['tiles','metrics','stream','daemons','errs','cost','eval','embedding','breakdown','drive','conns','keys'].forEach(k=>{ if(s.ops[k]!=null) OPS[k]=s.ops[k]; }); root.__opsData = OPS; }
-    // cabinet/alcove comps with a real source: sleep / study / finance.
-    // each comp reads window.CC_COMP.<name>.<field> at mount, falling back to its demo.
-    // decorative comps (disc/radio/sky/opus/portrait/desk) + stateful calendar stay demo.
+    // wired comps read window.CC_COMP.<name>.<field> at mount, falling back to demo:
+    // heartbeat · sky · score · opus · sleep · study · finance · disc.
+    // decorative (radio / portrait / desk) + the stateful calendar stay demo.
     if(s.comps){ root.CC_COMP=root.CC_COMP||{};
       Object.keys(s.comps).forEach(k=>{ root.CC_COMP[k]=Object.assign(root.CC_COMP[k]||{}, s.comps[k]); }); }
   }

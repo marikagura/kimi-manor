@@ -1,8 +1,7 @@
 # cc-gild · state schema
 
-cc-gild ships with inlined **placeholder** data (`assets/data.js`, `assets/v4-data.js`,
-`assets/v2-data.js`). With no data source configured it renders that demo as-is — no
-backend, works under `file://`.
+cc-gild ships with the **placeholder** demo inlined directly in `cc-gild-v7.html`. With no
+data source configured it renders that demo as-is — no backend, works under `file://`.
 
 To drive it with **real data**, point it at an endpoint that returns the JSON below:
 
