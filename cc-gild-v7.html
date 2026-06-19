@@ -610,7 +610,7 @@ body{overflow:hidden}
 /* glass sheen + gilt inner casing over the opening */
 .view-frame::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
   background:linear-gradient(116deg,rgba(255,242,214,.10),transparent 38%),radial-gradient(130% 90% at 50% 0,transparent 62%,rgba(0,0,0,.45))}
-.crn-fl{position:absolute;z-index:4;color:var(--accent);opacity:.6;pointer-events:none}
+.crn-fl{position:absolute;z-index:4;color:var(--rose);opacity:.6;pointer-events:none}
 
 /* framed masked window (v4.1–4.3 black-gold windows) */
 .view-frame.fwin{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 120% 80% at 50% 26%,#161009,#0a0705)}
@@ -619,7 +619,7 @@ body{overflow:hidden}
 .fw-win .fw-scene svg{width:100%;height:100%;display:block}
 .fw-win .fw-veil{position:absolute;inset:0;background:#0b0710;opacity:.86;transition:opacity .8s ease}
 .casement.open .fw-veil{opacity:0}
-.fw-win .frame{position:absolute;inset:0;width:100%;height:100%;color:var(--accent)}
+.fw-win .frame{position:absolute;inset:0;width:100%;height:100%;color:var(--rose)}
 /* casement deco (travel only): Rose Panel 描金框作底 + 拱两侧细长凹槽壁柱。
    arch(.fw-win) 尺寸不动 — 柱子/框只占两侧留白, flex 行让柱子紧贴拱边。 */
 .fwin.deco .cv-rosepanel{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.9}
