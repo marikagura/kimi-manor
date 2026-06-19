@@ -2707,7 +2707,7 @@ body{overflow:hidden}
   function eligible(p){ if (p.hasAttribute('data-exhibit')) return false; if (p.hasAttribute('data-collkey')) return false; if (p.classList.contains('profile-frameless')) return false; return !!keyOf(p); }
   // KG + sky close discreetly via double-click (no visible × — she asked them not to look like panels)
   function discreet(el, key, label){ if (!el) return; el.dataset.collkey = key; if (label) el.dataset.colllabel = label; if (el.dataset.collDbl) return; el.dataset.collDbl = '1'; el.title = '双击收起 · double-click to hide'; el.addEventListener('dblclick', function (e) { e.stopPropagation(); e.preventDefault(); collapse(el); }); }
-  function tagSpecials(){ discreet(document.getElementById('comp-graph'), 'graph', '心象 · galaxy'); discreet(document.querySelector('.al-atmos[data-exhibit="sky"]'), 'sky', 'her sky · 窗外'); }
+  function tagSpecials(){ discreet(document.getElementById('comp-graph'), 'graph', '心象 · galaxy'); discreet(document.querySelector('.al-atmos[data-exhibit="sky"]'), 'sky', 'her sky · 窗外'); discreet(document.getElementById('comp-radio'), 'radio', '电台 · radio'); }
 
   function collapse(p){ var k = keyOf(p); if (!k) return; if (collapsed.indexOf(k) < 0) { collapsed.push(k); save(); } p.classList.add('col-hidden'); renderTray(); }
   function restore(k){ var i = collapsed.indexOf(k); if (i >= 0) { collapsed.splice(i, 1); save(); } var p = findByKey(k); if (p) p.classList.remove('col-hidden'); renderTray(); }
