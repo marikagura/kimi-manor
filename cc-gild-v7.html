@@ -2699,11 +2699,15 @@ body{overflow:hidden}
   function load(){ try { return JSON.parse(localStorage.getItem(LSKEY) || '[]'); } catch (_) { return []; } }
   function save(){ try { localStorage.setItem(LSKEY, JSON.stringify(collapsed)); } catch (_) {} }
   var collapsed = load();
+  function items(){ var a = Array.prototype.slice.call(document.querySelectorAll('.panel')); Array.prototype.slice.call(document.querySelectorAll('[data-collkey]')).forEach(function (e) { if (a.indexOf(e) < 0) a.push(e); }); return a; }
   function panels(){ return Array.prototype.slice.call(document.querySelectorAll('.panel')); }
-  function keyOf(p){ if (p.dataset.pkey) return p.dataset.pkey; var l = p.querySelector(':scope > .ph .lbl'); return l ? l.textContent.trim() : ''; }
-  function titleOf(p){ var l = p.querySelector(':scope > .ph .lbl'); return l ? l.textContent.trim() : (p.dataset.pkey || 'panel'); }
-  function findByKey(k){ var ps = panels(); for (var i = 0; i < ps.length; i++) if (keyOf(ps[i]) === k) return ps[i]; return null; }
-  function eligible(p){ if (p.hasAttribute('data-exhibit')) return false; if (p.classList.contains('profile-frameless')) return false; return !!keyOf(p); }
+  function keyOf(p){ if (p.dataset.collkey) return p.dataset.collkey; if (p.dataset.pkey) return p.dataset.pkey; var l = p.querySelector(':scope > .ph .lbl'); return l ? l.textContent.trim() : ''; }
+  function titleOf(p){ if (p.dataset.colllabel) return p.dataset.colllabel; var l = p.querySelector(':scope > .ph .lbl'); return l ? l.textContent.trim() : (p.dataset.pkey || p.dataset.collkey || 'panel'); }
+  function findByKey(k){ var ps = items(); for (var i = 0; i < ps.length; i++) if (keyOf(ps[i]) === k) return ps[i]; return null; }
+  function eligible(p){ if (p.hasAttribute('data-exhibit')) return false; if (p.hasAttribute('data-collkey')) return false; if (p.classList.contains('profile-frameless')) return false; return !!keyOf(p); }
+  // KG + sky close discreetly via double-click (no visible × — she asked them not to look like panels)
+  function discreet(el, key, label){ if (!el) return; el.dataset.collkey = key; if (label) el.dataset.colllabel = label; if (el.dataset.collDbl) return; el.dataset.collDbl = '1'; el.title = '双击收起 · double-click to hide'; el.addEventListener('dblclick', function (e) { e.stopPropagation(); e.preventDefault(); collapse(el); }); }
+  function tagSpecials(){ discreet(document.getElementById('comp-graph'), 'graph', '心象 · galaxy'); discreet(document.querySelector('.al-atmos[data-exhibit="sky"]'), 'sky', 'her sky · 窗外'); }
 
   function collapse(p){ var k = keyOf(p); if (!k) return; if (collapsed.indexOf(k) < 0) { collapsed.push(k); save(); } p.classList.add('col-hidden'); renderTray(); }
   function restore(k){ var i = collapsed.indexOf(k); if (i >= 0) { collapsed.splice(i, 1); save(); } var p = findByKey(k); if (p) p.classList.remove('col-hidden'); renderTray(); }
@@ -2748,13 +2752,13 @@ body{overflow:hidden}
     if (badge) { badge.textContent = collapsed.length; badge.style.display = collapsed.length ? 'inline-block' : 'none'; }
   }
 
-  function applyCollapsed(){ panels().forEach(function (p) { var k = keyOf(p); if (k) p.classList.toggle('col-hidden', collapsed.indexOf(k) >= 0); }); renderTray(); }
+  function applyCollapsed(){ items().forEach(function (p) { var k = keyOf(p); if (k) p.classList.toggle('col-hidden', collapsed.indexOf(k) >= 0); }); renderTray(); }
 
   function injectCss(){
     if (document.getElementById('panel-collapse-css')) return;
     var st = document.createElement('style'); st.id = 'panel-collapse-css';
     st.textContent =
-      '.panel.col-hidden{display:none !important}' +
+      '.col-hidden{display:none !important}' +
       '.ph-x{margin-left:2px;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--mute);opacity:0;cursor:pointer;border-radius:50%;transition:opacity .15s,color .15s,background .15s;flex:0 0 auto;padding:0}' +
       '.ph:hover .ph-x{opacity:.6}' +
       '.ph-x:hover{opacity:1;color:var(--accent);background:rgba(200,164,94,0.12)}' +
@@ -2769,7 +2773,7 @@ body{overflow:hidden}
     document.head.appendChild(st);
   }
 
-  function setup(){ injectCss(); buildTray(); addCloses(); applyCollapsed(); }
+  function setup(){ injectCss(); buildTray(); tagSpecials(); addCloses(); applyCollapsed(); }
   function ready(fn){ if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
   ready(function () { setup(); [300, 800, 1600].forEach(function (ms) { setTimeout(setup, ms); }); });
 })();
