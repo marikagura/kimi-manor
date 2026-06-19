@@ -2512,9 +2512,9 @@ body{overflow:hidden}
 (function () {
   window.Comp = window.Comp || {};
   var GN = { ink:'#efe5d3', gold:'#c9a76a', goldBright:'#ead29a', rose:'#b04063', roseDeep:'#7a1f3a', rosePale:'#d28aa1', glass:'#fff7e6',
-    calm:'#8a9c84', warmth:'#c9a76a', brooding:'#5a708a', toward:'#b04063', cobalt:'#6f86ab', plate:'#14110d' };
+    calm:'#8a9c84', warmth:'#c9a76a', brooding:'#9488b8', toward:'#b04063', cobalt:'#6f86ab', obs:'#a9adb5', plate:'#14110d' };
   var GD = { ink:'#2a201b', gold:'#9a7a3a', goldBright:'#b08c4a', rose:'#a83a5d', roseDeep:'#6f1d34', rosePale:'#c98aa1', glass:'#ffffff',
-    calm:'#7a8a72', warmth:'#a8843a', brooding:'#5a708a', toward:'#a83a5d', cobalt:'#5a708a', plate:'#d8c39a' };
+    calm:'#7a8a72', warmth:'#a8843a', brooding:'#5a708a', toward:'#a83a5d', cobalt:'#5a708a', obs:'#8f939b', plate:'#d8c39a' };
   function isDay(){ return document.documentElement.getAttribute('data-theme') === 'day'; }
   function hexA(hex,a){ var h=hex.replace('#',''); var n=parseInt(h.length===3?h.split('').map(function(c){return c+c;}).join(''):h,16);
     return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
@@ -2578,7 +2578,7 @@ body{overflow:hidden}
       return { x:cx+x1*persp*R, y:cy+y1*persp*R, z:z2, s:persp }; }
     function vColor(v,T){ if(v==null) return T.gold; if(v<-0.15) return T.brooding; if(v<0.12) return T.calm; if(v<0.45) return T.warmth; return T.toward; }
     function edgeCol(rel,T){ return ({similar:T.calm,mentions:T.warmth,tagged:T.cobalt,co_mentioned:T.rose})[rel]||hexA(T.gold,0.3); }
-    function nodeCol(node,T){ if(node.kind==='memory') return vColor(node.valence,T); if(node.kind==='entity') return T.gold; if(node.kind==='topic') return T.cobalt; return hexA(T.ink,0.6); }
+    function nodeCol(node,T){ if(node.kind==='memory') return vColor(node.valence,T); if(node.kind==='entity') return T.gold; if(node.kind==='topic') return T.cobalt; return T.obs; }
     function baseSize(node){ return 1.0+node.weight*2.0; }
     function frame(){
       var T=isDay()?GD:GN, dk=!isDay(); t+=1; ctx.clearRect(0,0,W,H);
