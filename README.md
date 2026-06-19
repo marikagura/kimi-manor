@@ -101,4 +101,4 @@ ELECTRON.md        打包成 .dmg / .exe 的说明（未测试）
 代码：[MIT](LICENSE) © 2026 marikagura。
 
 艺术**不**走 MIT。那套手绘金线 SVG / PNG——烛台、狐狸、玫瑰、书架、印记，以及其余描金件——
-© 2026 marikagura，保留所有权利（用到你自己项目里需经许可）。壳随便 fork；线自己画。
+© 2026 marikagura，保留所有权利。
