@@ -2691,6 +2691,89 @@ body{overflow:hidden}
   };
 })();
 
+/* panel-collapse.js — an × on every titled panel minimises it into a tray button
+   beside the 开窗 switch; click the tray to list collapsed panels and bring any back.
+   Pure DOM, persists to localStorage (survives ⌘Q). No app-closure deps. */
+(function () {
+  var LSKEY = 'cc-gild-collapsed';
+  function load(){ try { return JSON.parse(localStorage.getItem(LSKEY) || '[]'); } catch (_) { return []; } }
+  function save(){ try { localStorage.setItem(LSKEY, JSON.stringify(collapsed)); } catch (_) {} }
+  var collapsed = load();
+  function panels(){ return Array.prototype.slice.call(document.querySelectorAll('.panel')); }
+  function keyOf(p){ if (p.dataset.pkey) return p.dataset.pkey; var l = p.querySelector(':scope > .ph .lbl'); return l ? l.textContent.trim() : ''; }
+  function titleOf(p){ var l = p.querySelector(':scope > .ph .lbl'); return l ? l.textContent.trim() : (p.dataset.pkey || 'panel'); }
+  function findByKey(k){ var ps = panels(); for (var i = 0; i < ps.length; i++) if (keyOf(ps[i]) === k) return ps[i]; return null; }
+  function eligible(p){ if (p.hasAttribute('data-exhibit')) return false; if (p.classList.contains('profile-frameless')) return false; return !!keyOf(p); }
+
+  function collapse(p){ var k = keyOf(p); if (!k) return; if (collapsed.indexOf(k) < 0) { collapsed.push(k); save(); } p.classList.add('col-hidden'); renderTray(); }
+  function restore(k){ var i = collapsed.indexOf(k); if (i >= 0) { collapsed.splice(i, 1); save(); } var p = findByKey(k); if (p) p.classList.remove('col-hidden'); renderTray(); }
+
+  function addCloses(){
+    panels().forEach(function (p) {
+      if (!eligible(p)) return;
+      var h = p.querySelector(':scope > .ph'); if (!h || h.querySelector('.ph-x')) return;
+      var x = document.createElement('button');
+      x.className = 'ph-x'; x.type = 'button'; x.title = '收起 · minimise'; x.setAttribute('aria-label', 'collapse panel');
+      x.innerHTML = '<svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M3 3 L9 9 M9 3 L3 9" stroke="currentColor" stroke-width="1.1" fill="none" stroke-linecap="round"/></svg>';
+      x.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+      x.addEventListener('click', function (e) { e.stopPropagation(); e.preventDefault(); collapse(p); });
+      h.appendChild(x);
+    });
+  }
+
+  var tray, list, badge;
+  function buildTray(){
+    var ws = document.getElementById('winsw'); if (!ws || document.getElementById('coltray')) return;
+    tray = document.createElement('div'); tray.id = 'coltray'; tray.style.position = 'relative';
+    var btn = document.createElement('button'); btn.className = 'winsw coltray-btn'; btn.type = 'button'; btn.title = '收起的面板 · collapsed';
+    btn.innerHTML = '<span class="ic" style="display:inline-flex"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><rect x="2.5" y="4" width="11" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1"/><path d="M2.5 8 H6 a2 2 0 0 0 4 0 H13.5" fill="none" stroke="currentColor" stroke-width="1"/></svg></span><span class="coltray-badge" style="display:none">0</span>';
+    list = document.createElement('div'); list.className = 'coltray-list'; list.style.display = 'none';
+    tray.appendChild(btn); tray.appendChild(list);
+    ws.parentNode.insertBefore(tray, ws.nextSibling);
+    btn.addEventListener('click', function (e) { e.stopPropagation(); renderTray(); list.style.display = (list.style.display === 'none') ? 'block' : 'none'; });
+    document.addEventListener('click', function (e) { if (tray && !tray.contains(e.target)) list.style.display = 'none'; });
+    badge = btn.querySelector('.coltray-badge');
+  }
+  function renderTray(){
+    if (!list) return;
+    list.innerHTML = '';
+    if (!collapsed.length) { var em = document.createElement('div'); em.className = 'coltray-empty'; em.textContent = '— 没有收起的面板'; list.appendChild(em); }
+    collapsed.forEach(function (k) {
+      var p = findByKey(k); var label = p ? titleOf(p) : k;
+      var it = document.createElement('button'); it.className = 'coltray-item'; it.type = 'button';
+      it.innerHTML = '<span class="ci-dot"></span>'; it.appendChild(document.createTextNode(label));
+      it.addEventListener('click', function (e) { e.stopPropagation(); restore(k); list.style.display = 'none'; });
+      list.appendChild(it);
+    });
+    if (badge) { badge.textContent = collapsed.length; badge.style.display = collapsed.length ? 'inline-block' : 'none'; }
+  }
+
+  function applyCollapsed(){ panels().forEach(function (p) { var k = keyOf(p); if (k) p.classList.toggle('col-hidden', collapsed.indexOf(k) >= 0); }); renderTray(); }
+
+  function injectCss(){
+    if (document.getElementById('panel-collapse-css')) return;
+    var st = document.createElement('style'); st.id = 'panel-collapse-css';
+    st.textContent =
+      '.panel.col-hidden{display:none !important}' +
+      '.ph-x{margin-left:2px;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--mute);opacity:0;cursor:pointer;border-radius:50%;transition:opacity .15s,color .15s,background .15s;flex:0 0 auto;padding:0}' +
+      '.ph:hover .ph-x{opacity:.6}' +
+      '.ph-x:hover{opacity:1;color:var(--accent);background:rgba(200,164,94,0.12)}' +
+      '#coltray{display:inline-flex;align-items:center}' +
+      '.coltray-btn{position:relative}' +
+      '.coltray-btn .coltray-badge{font-size:9px;min-width:14px;height:14px;line-height:14px;text-align:center;border-radius:99px;background:var(--accent);color:var(--void);margin-left:1px;font-style:normal;padding:0 3px}' +
+      '.coltray-list{position:absolute;top:calc(100% + 6px);right:0;min-width:178px;max-height:60vh;overflow:auto;background:var(--void);border:0.6px solid var(--hair);border-radius:9px;padding:5px;box-shadow:0 16px 40px -12px rgba(0,0,0,0.42);z-index:300}' +
+      '.coltray-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:7px 11px;border:none;background:transparent;color:var(--ink);font-family:var(--serif);font-style:italic;font-size:13px;cursor:pointer;border-radius:6px;white-space:nowrap}' +
+      '.coltray-item:hover{background:rgba(200,164,94,0.10)}' +
+      '.ci-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex:0 0 auto}' +
+      '.coltray-empty{padding:9px 11px;color:var(--mute);font-family:var(--serif);font-style:italic;font-size:12px;opacity:.7;white-space:nowrap}';
+    document.head.appendChild(st);
+  }
+
+  function setup(){ injectCss(); buildTray(); addCloses(); applyCollapsed(); }
+  function ready(fn){ if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+  ready(function () { setup(); [300, 800, 1600].forEach(function (ms) { setTimeout(setup, ms); }); });
+})();
+
 // comp-opus.js — "opus score" demo panel for cc-gild.
 // Vanilla port of the visual essence of kimi-web OpusSheet (grand-staff score sheet).
 // Decorative demo only: a treble + bass grand staff, clefs, time sig, and a phrase
