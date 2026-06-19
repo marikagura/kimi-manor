@@ -1,4 +1,4 @@
-# kimi-manor · 描金
+# kimi-manor 
 
 把 Claude Code 包进一间描金网页壳：桌面裹着一个真实终端和一个四室
 「atelier」：**atelier · alcove · cabinet · ops**。全手绘金线 SVG，Cormorant Garamond + 宋体，
