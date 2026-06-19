@@ -2,7 +2,7 @@
 
 把 Claude Code 包进一间描金网页壳：桌面裹着一个真实终端和一个四室
 「atelier」：**atelier · alcove · cabinet · ops**。全手绘金线 SVG，Cormorant Garamond + 宋体，
-昼 / 夜双肤。不用图标字体，能用隐喻的地方不放图表。
+昼 / 夜双肤。
 
 > 出厂即 placeholder 数据、离线可跑。接上你自己的端点，它就是实时的。
 
