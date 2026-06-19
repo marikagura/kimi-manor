@@ -4815,7 +4815,7 @@ window.Comp.radio = function (el) {
       }
     });
     // rose boss inside latch
-    $$('.latch').forEach(l=>{ l.innerHTML = M.rose({color:accent,size:24}); });
+    $$('.latch').forEach(l=>{ const day=document.documentElement.getAttribute('data-theme')==='day'; l.innerHTML = '<img src="assets/'+(day?'rose-window-handle-day.png':'rose-window-handle.png')+'" alt="" style="width:15px;height:42px;object-fit:contain;transform:rotate(20deg);display:block">'; });
   }
 
   /* ====================== drag ====================== */
