@@ -103,7 +103,6 @@ ELECTRON.md        打包成 .dmg / .exe 的说明（未测试）
 艺术**不**走 MIT，分两层：
 
 - `assets/entry-motion.png`（入场动画 · 庄园的门脸）—— © 2026 marikagura，保留所有权利。
-  这张是这间宅子的招牌，请换成你自己的。
 - 其余手绘金线 SVG / PNG——烛台、狐狸、玫瑰、书架、印记，以及描金那套——按
   [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)：署名 + 非商业前提下随便用、
   随便改；别商用，也别把素材单独拎出来再分发。署名一句
