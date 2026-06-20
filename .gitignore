@@ -6,3 +6,6 @@ avatars
 .env
 .env.*
 dist/
+
+# local de-id patterns (never commit)
+.scrub-secrets.local
