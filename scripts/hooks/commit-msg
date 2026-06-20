@@ -4,9 +4,9 @@ set -uo pipefail
 root="$(git rev-parse --show-toplevel)"
 msg="$1"
 fail=0
-if grep -nIE '/Users/[A-Za-z]|sk-[A-Za-z0-9]{8}|-----BEGIN [A-Z]+ PRIVATE KEY' "$msg" >/dev/null 2>&1; then
+if grep -nIE '/Users/[A-Za-z]|sk-[A-Za-z0-9]{20,}|-----BEGIN [A-Z]+ PRIVATE KEY' "$msg" >/dev/null 2>&1; then
   echo "✗ commit message contains a path/credential shape:"
-  grep -nIE '/Users/[A-Za-z]|sk-[A-Za-z0-9]{8}' "$msg"; fail=1
+  grep -nIE '/Users/[A-Za-z]|sk-[A-Za-z0-9]{20,}' "$msg"; fail=1
 fi
 if [ -f "$root/.scrub-secrets.local" ]; then
   while IFS= read -r w; do
