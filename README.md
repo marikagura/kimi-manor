@@ -83,6 +83,32 @@ http://localhost:8753/cc-gild-v7.html?state=./state.sample.json
 - Cormorant Garamond 配宋体
 - 烛光的夜 / 玫瑰田的昼，选择存 localStorage
 
+## 终端输入条配色（可选）
+
+终端里跑 Claude Code 时，它给你输入回显的那条高亮 bar 是 CC 自己画的（主题 token `userMessageBackground`，24-bit truecolor），**不走终端调色板**——所以壳的 `public/theme.js` 直接碰不到它。
+
+想让它跟着 atelier 的昼夜走：给 CC 建一个自定义主题，只把这一项覆盖成终端的 black 槽（`ansi256(0)`）。
+
+`~/.claude/themes/atelier.json`：
+
+```json
+{
+  "name": "atelier",
+  "base": "dark",
+  "overrides": { "userMessageBackground": "ansi256(0)" }
+}
+```
+
+然后在**终端跑 `claude` 的那个目录**（即 `CC_CWD`，默认 `$HOME`）的 `.claude/settings.json` 里指过去：
+
+```json
+{ "theme": "custom:atelier" }
+```
+
+这样那条 bar 就 = `public/theme.js` 里 night / day 的 `black`，并跟着昼夜实时切（见 v0.3.1 的活切）。想换色就改那两个 `black`——注意留得够深，CC 的浅色字才托得住。
+
+**跟路径绑定**：主题挂在 `CC_CWD` 那个目录的 `.claude/settings` 上，会作用于在那儿跑的**所有** `claude`，不只 atelier 的终端——CC 没有「只这一次启动」的主题开关。不想让它对该目录全局生效，就改用 `settings.local.json`（gitignore、仅本机本项目）。
+
 ## 目录
 
 ```
