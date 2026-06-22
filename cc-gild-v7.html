@@ -1264,7 +1264,7 @@ html[data-theme="day"] .cv-th-day{display:block}
       <!-- portrait — frameless floating draggable widget, scoped to the alcove -->
       <div class="float-widget" id="comp-portrait" style="left:40px;top:96px"></div>
       <!-- her mind — the KG as a turning galaxy under glass (frameless, draggable) -->
-      <div class="float-widget" id="comp-graph" style="left:auto;right:56px;top:150px;width:240px;height:344px"></div>
+      <div class="float-widget" id="comp-graph" style="left:150px;top:430px;width:300px;height:430px"></div>
     </div>
 
   </div>
@@ -5248,7 +5248,7 @@ window.Comp.radio = function (el) {
   function wireFloats(){
     wireFloat($('#comp-radio'),   {left: innerWidth-260, top: 120});
     wireFloat($('#comp-portrait'),{left: 40,             top: 132});
-    wireFloat($('#comp-graph'),   {left: innerWidth-300, top: 150});
+    wireFloat($('#comp-graph'),   {left: 150, top: 430});
   }
 
   /* ====================== convo + composer ====================== */
@@ -5809,8 +5809,9 @@ window.Comp.radio = function (el) {
     // theme
     $$('[data-theme-toggle]').forEach(b=>b.onclick=()=>{const next=document.documentElement.getAttribute('data-theme')==='night'?'day':'night';
       C.applyTheme(next);if(!$('#v4-score').querySelector('.hb-wrap'))$('#v4-score').innerHTML=`<div class="score">${C.buildScoreSVG()}</div>${C.scoreLegend()}`;paint();mountWeatherPet();
-      // 终端 iframe 没有自己的开关了 — 昼夜跟随顶栏, 重载带新 theme
-      try{ ['#convo-term iframe','#tk-iframe'].forEach(function(sel){ var f=document.querySelector(sel); if(f&&f.src&&/[?&]theme=/.test(f.src)) f.src=f.src.replace(/([?&])theme=(night|day)/,'$1theme='+next); }); }catch(_){}
+      // 终端 iframe 昼夜跟随顶栏 — postMessage 活切主题, 不重载 iframe。
+      // (旧版重设 f.src 会重载 iframe → 断 WS → 服务器重开 pty, 把会话切没了。)
+      try{ ['#convo-term iframe','#tk-iframe'].forEach(function(sel){ var f=document.querySelector(sel); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage({type:'cc-theme',theme:next},'*'); }catch(_){} } }); }catch(_){}
       try{ if(window.__bubbleGalaxy) window.__bubbleGalaxy(next); }catch(_){}
       b.textContent=next==='night'?'夜':'昼';});
     $$('[data-theme-toggle]').forEach(b=>b.textContent=(localStorage.getItem('cc-gild-theme')||'night')==='night'?'夜':'昼');
