@@ -33,6 +33,13 @@ function applyTheme(name) {
   if (btn) btn.textContent = name === 'night' ? '夜' : '昼';
 }
 
+// manor 顶栏切昼夜 → postMessage 过来, 活切 xterm 主题 (applyTheme 只换 __term.options.theme),
+// 不重载 iframe — 重载会断 WS → 服务器重开一个 pty, 把当前会话杀掉。
+window.addEventListener('message', (e) => {
+  const d = e.data;
+  if (d && d.type === 'cc-theme' && (d.theme === 'day' || d.theme === 'night')) applyTheme(d.theme);
+});
+
 function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 function paintOrnaments() {
   const hair = cssVar('--hair'), accent = cssVar('--accent');

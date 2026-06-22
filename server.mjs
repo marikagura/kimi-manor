@@ -206,6 +206,9 @@ function pickShell() {
   return { cmd: process.platform === 'win32' ? 'powershell.exe' : (process.env.SHELL || 'bash'), args: [] };
 }
 const ptyWss = new WebSocketServer({ noServer: true });
+// Track live ptys so a server shutdown (e.g. the desktop shell's quit → SIGTERM) kills the
+// shell/claude children too — otherwise each pty orphans and keeps running across quits.
+const LIVE_TERMS = new Set();
 
 // ── /agent — Claude Agent SDK bridge (The Salon · Claude seat) ───────────────
 // Uses the locally installed @anthropic-ai/claude-agent-sdk (or CCG_SDK), the
@@ -276,8 +279,9 @@ ptyWss.on('connection', async (socket) => {
                 `\x1b[38;2;182;164;140m试试 SHELL_FALLBACK=1 node server.mjs 先跑个 shell。\x1b[0m\r\n`);
     return;
   }
+  LIVE_TERMS.add(term);
   term.onData((d) => { if (socket.readyState === 1) socket.send(d); });
-  term.onExit(() => { try { socket.close(); } catch (_) {} });
+  term.onExit(() => { LIVE_TERMS.delete(term); try { socket.close(); } catch (_) {} });
   // init: ① clean prompt — hide user@host so the terminal never leaks the username/host;
   //       ② clear the entry prompt line; ③ optionally auto-run CC_AUTOSTART (e.g. claude).
   const sh = process.env.SHELL || '';
@@ -291,7 +295,7 @@ ptyWss.on('connection', async (socket) => {
     if (kind === '0') term.write(data);
     else if (kind === '1') { try { const { cols, rows } = JSON.parse(data); term.resize(cols, rows); } catch (_) {} }
   });
-  socket.on('close', () => { try { term.kill(); } catch (_) {} });
+  socket.on('close', () => { LIVE_TERMS.delete(term); try { term.kill(); } catch (_) {} });
 });
 
 agentWss.on('connection', async (socket) => {
@@ -406,3 +410,13 @@ server.listen(PORT, '127.0.0.1', () => {
   console.log(`     atelier      →  http://localhost:${PORT}/atelier`);
   console.log(`     /state placeholder · /pty → ${CC_CMD} (cwd: ${CC_CWD}) · /agent · /codex · /parlour/voice\n`);
 });
+
+// Clean shutdown — kill every live pty so a quit (SIGTERM/SIGINT) doesn't leave orphaned
+// shell/claude processes running. Without this they pile up across restarts.
+function _shutdown() {
+  for (const t of LIVE_TERMS) { try { t.kill(); } catch (_) {} }
+  LIVE_TERMS.clear();
+  process.exit(0);
+}
+process.on('SIGTERM', _shutdown);
+process.on('SIGINT', _shutdown);
