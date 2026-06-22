@@ -2636,13 +2636,13 @@ html[data-theme="day"] .cv-th-day{display:block}
       ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over'; bodyPath(halfW,footY,shoulderY,domeTopY,neckW);
       var tint=ctx.createLinearGradient(cx-halfW,domeTopY,cx+halfW,baseY); tint.addColorStop(0,hexA(T.glass,dk?0.05:0.10)); tint.addColorStop(0.5,hexA(T.glass,0)); ctx.fillStyle=tint; ctx.fill(); ctx.restore();
       ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over'; bodyPath(halfW,footY,shoulderY,domeTopY,neckW); ctx.clip();
-      var ca=ctx.createLinearGradient(cx-halfW,shoulderY-M*0.05,cx+halfW,shoulderY+M*0.10); ca.addColorStop(0,hexA(T.glass,0)); ca.addColorStop(0.5,hexA(T.glass,dk?0.07:0.10)); ca.addColorStop(1,hexA(T.glass,0));
-      ctx.fillStyle=ca; ctx.fillRect(cx-halfW,shoulderY-M*0.06,halfW*2,M*0.18); ctx.restore();
+      var ca=ctx.createRadialGradient(cx,shoulderY+M*0.01,0,cx,shoulderY+M*0.01,halfW*1.15); ca.addColorStop(0,hexA(T.glass,dk?0.06:0.10)); ca.addColorStop(0.6,hexA(T.glass,dk?0.02:0.04)); ca.addColorStop(1,hexA(T.glass,0));
+      ctx.fillStyle=ca; ctx.fillRect(cx-halfW,domeTopY,halfW*2,baseY-domeTopY); ctx.restore();
       ctx.strokeStyle=gold(0.6); ctx.lineWidth=1.3; ctx.lineJoin='round'; bodyPath(halfW,footY,shoulderY,domeTopY,neckW); ctx.stroke();
       ctx.strokeStyle=gold(0.22); ctx.lineWidth=0.6; bodyPath(halfW-7,footY,shoulderY+4,domeTopY+8,neckW-2); ctx.stroke();
       ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over'; bodyPath(halfW,footY,shoulderY,domeTopY,neckW); ctx.clip();
       var rim=ctx.createRadialGradient(cx-halfW*0.5,domeTopY+M*0.10,0,cx-halfW*0.5,domeTopY+M*0.10,M*0.26); rim.addColorStop(0,hexA(T.glass,dk?0.10:0.14)); rim.addColorStop(1,hexA(T.glass,0));
-      ctx.fillStyle=rim; ctx.fillRect(cx-halfW,domeTopY,halfW,M*0.4); ctx.restore();
+      ctx.fillStyle=rim; ctx.fillRect(cx-halfW,domeTopY,halfW*2,M*0.4); ctx.restore();
       var knobY=domeTopY-M*0.028; ctx.strokeStyle=gold(0.6); ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(cx,domeTopY-M*0.004); ctx.lineTo(cx,knobY+4); ctx.stroke();
       ctx.fillStyle=gold(0.85); ctx.beginPath(); ctx.arc(cx,knobY,M*0.012,0,7); ctx.fill();
       ctx.strokeStyle=gold(0.5); ctx.lineWidth=0.7; ctx.beginPath(); ctx.ellipse(cx,knobY+M*0.013,M*0.017,M*0.006,0,0,7); ctx.stroke();
