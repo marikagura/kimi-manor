@@ -1,13 +1,12 @@
 # kimi-manor 
 
-把 Claude Code 包进一间描金网页壳：桌面裹着一个真实终端和一个四室
-「atelier」：**atelier · alcove · cabinet · ops**。全手绘金线 SVG，Cormorant Garamond + 宋体，
-昼 / 夜双肤。
+把 Claude Code——或任何一个 agent CLI——请进一间房子。
 
-> 出厂即 placeholder 数据、离线可跑。接上你自己的端点，它就是实时的。
+不是又一块黑屏终端，是一座四室 atelier（**atelier · alcove · cabinet · ops**），桌面裹着一个真实终端。你的命令行在这间屋子里跑。
 
-随附的 `server.mjs` 还带四条可选 **live bridge**——真终端、**Salon**（Claude + GPT agent，可替代）、
-**Parlour** 语音——每条都门控在你自己的 key 后面，默认不联网，UI 也从不假设一个它渲染不了的后端。
+> 出厂即 placeholder 数据、离线可跑。接上你自己的端点，它就活成实时的。
+
+`server.mjs` 另带几条可选 **live bridge**——终端跑任何 agent CLI（`CC_CMD` 换：claude · codex · gemini · aider…），Salon 气泡里 Claude 与 codex 两座同席，Parlour 把它们念出声。每条都门控在你自己的 key 后面、默认不联网，UI 从不假设一个它渲染不了的后端。
 
 ## 单文件构建
 
@@ -42,9 +41,9 @@ node server.mjs                 # → http://localhost:7681/atelier
 
 | bridge | 是什么 | 需要 |
 |---|---|---|
-| `/pty` | 真 Claude Code / shell 终端 | `node-pty`（optional dep）· `SHELL_FALLBACK=1` 起普通 shell |
+| `/pty` | 真终端——**任何 agent CLI 或 shell**（claude · codex · gemini · aider…，`CC_CMD` 换） | `node-pty`（optional dep）· `SHELL_FALLBACK=1` 起普通 shell |
 | `/agent` | Salon 的 **Claude** 座（气泡对话，工具调用在 UI 里批准） | `@anthropic-ai/claude-agent-sdk` + 你的 `claude` 登录 · `CCG_SDK` / `CCG_AGENT_CWD` / `CCG_CWD_ALLOW` 覆盖 |
-| `/codex` | Salon 的 **GPT** 座（只读，shell 关） | PATH 上有 `codex` · `CODEX_BIN` 覆盖 |
+| `/codex` | Salon 的 **codex** 座（`codex exec` 协议，只读 · shell 关） | PATH 上有 `codex`（或 codex 兼容 CLI）· `CODEX_BIN` 覆盖 |
 | `/parlour/voice` | Parlour 的 text-to-speech | `OPENAI_API_KEY`（或 `CCG_TTS_URL` + `CCG_TTS_KEY` 接任何 OpenAI 兼容 TTS）· `CCG_VOICE_CLAUDE` / `CCG_VOICE_GPT` / `CCG_TTS_MODEL` |
 
 **Parlour 默认是文字、不带声音。** 回复以文字呈现；要出声，把 `/parlour/voice` 指向你自己的 TTS——
@@ -78,9 +77,11 @@ http://localhost:8753/cc-gild-v7.html?state=./state.sample.json
 **ops** 室怎么按自己更快的节奏轮询：见 [STATE-SCHEMA.md](STATE-SCHEMA.md)。你端点省略的 `comps` / `ops`
 就停在内置 demo，所以只给一部分也行。
 
-## 主题
+## 元素
 
-夜（默认 · 烛光金底暖黑）/ 昼（玫瑰田 + 金线）。右上角切换，选择存在 `localStorage`。
+- 全手绘金线 SVG
+- Cormorant Garamond 配宋体
+- 烛光的夜 / 玫瑰田的昼，选择存 localStorage
 
 ## 目录
 
