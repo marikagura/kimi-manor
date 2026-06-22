@@ -1,5 +1,5 @@
 // comp-radio.js — radio / now-playing player for cc-gild.
-// Faithful vanilla port of the kimi-web reader radio widget: a black-gold
+// A reader radio widget (vanilla): a black-gold
 // Art Nouveau player card with a spinning vinyl disc, tonearm, orbiting gold
 // pip, now-playing track line, breathing progress bar, live timer, and
 // play / prev / next transport over REAL streaming stations.

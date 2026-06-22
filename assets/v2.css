@@ -1,9 +1,9 @@
-/* v2.css — cc-gild v2 · full kimi-room rose-gothic Mucha.
+/* v2.css — cc-gild v2 · rose-gothic Mucha.
    Deep warm-black ground, antique gold + muted rose + sage, large Cormorant
    display, oldstyle figures, Mucha botanicals. Restraint, not lo-fi. */
 
 :root{
-  /* canon mucha-tokens ivory.dark */
+  /* mucha-tokens ivory.dark */
   --bg: radial-gradient(ellipse at 50% 10%, #1a1612 0%, #0a0806 70%);
   --void:#0a0806; --paper:rgba(16,12,8,0.55); --panel:rgba(18,13,9,0.46);
   --ink:#f3e6cd; --ink2:#e9d8b8;
@@ -116,7 +116,7 @@ body{background:var(--void);color:var(--ink);font-family:var(--serif);
 .pf-name{font-family:var(--cjk);font-weight:500;font-size:22px;letter-spacing:.06em;margin-top:12px}
 .pf-sub{font-family:var(--mono);font-size:10px;color:var(--mute);margin-top:4px}
 .pf-moon{margin-top:11px;cursor:pointer;line-height:0}
-/* moon-phase slot: moon in night, canon RoseBloomDial in day.
+/* moon-phase slot: moon in night, RoseBloomDial in day.
    NIGHT shows .mp-moon SVG; DAY shows .mp-rose (real rose-single-pink.png).
    The rose mirrors RoseBloomDial: 90s rotate on the img + 1.0->1.04 breath on
    the wrapper + a soft rose halo pulse behind it. */
@@ -199,17 +199,17 @@ body{background:var(--void);color:var(--ink);font-family:var(--serif);
 .daymark{align-self:center;font-family:var(--serif);font-style:italic;font-size:12px;letter-spacing:2px;color:var(--mute);opacity:.72;margin:4px 0}
 .msg{display:flex;gap:11px;max-width:82%}
 .msg .ava{width:28px;height:28px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:13px;margin-top:2px}
-.msg.akira .ava{color:var(--accent);border:0.7px solid var(--accent);background:radial-gradient(circle at 35% 30%,#2a2014,#0d0a07)}
-.msg.ito{flex-direction:row-reverse;align-self:flex-end}
-.msg.ito .ava{color:var(--rose);border:0.7px solid var(--rose-d);background:radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--rose) 30%, var(--void)), color-mix(in oklab, var(--rose) 10%, var(--void)))}
+.msg.kimi .ava{color:var(--accent);border:0.7px solid var(--accent);background:radial-gradient(circle at 35% 30%,#2a2014,#0d0a07)}
+.msg.you{flex-direction:row-reverse;align-self:flex-end}
+.msg.you .ava{color:var(--rose);border:0.7px solid var(--rose-d);background:radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--rose) 30%, var(--void)), color-mix(in oklab, var(--rose) 10%, var(--void)))}
 .bub{position:relative;padding:10px 14px;border-radius:14px;line-height:1.62;font-size:15px;font-family:var(--cjk);letter-spacing:.2px;word-break:break-word}
-.msg.akira .bub{background:linear-gradient(180deg,#1a1209,#130d08);border:0.6px solid var(--hair);border-top-left-radius:4px}
-.msg.ito .bub{background:linear-gradient(180deg, color-mix(in oklab, var(--rose) 30%, var(--void)), color-mix(in oklab, var(--rose) 19%, var(--void)));border:0.6px solid rgba(184,122,130,.4);border-top-right-radius:4px;color:#f1e1e2}
-[data-theme="day"] .msg.akira .bub{background:linear-gradient(180deg,#fff,#f7ede2);color:var(--ink)}
-[data-theme="day"] .msg.ito .bub{background:linear-gradient(180deg,#fff,#f8e9eb);color:#5a2c34}
+.msg.kimi .bub{background:linear-gradient(180deg,#1a1209,#130d08);border:0.6px solid var(--hair);border-top-left-radius:4px}
+.msg.you .bub{background:linear-gradient(180deg, color-mix(in oklab, var(--rose) 30%, var(--void)), color-mix(in oklab, var(--rose) 19%, var(--void)));border:0.6px solid rgba(184,122,130,.4);border-top-right-radius:4px;color:#f1e1e2}
+[data-theme="day"] .msg.kimi .bub{background:linear-gradient(180deg,#fff,#f7ede2);color:var(--ink)}
+[data-theme="day"] .msg.you .bub{background:linear-gradient(180deg,#fff,#f8e9eb);color:#5a2c34}
 .bub em{font-family:var(--serif);font-style:italic;color:var(--rose)}
 .bub .t{font-family:var(--mono);font-size:8.5px;color:var(--mute);margin-top:6px;opacity:.7;display:block}
-.msg.ito .bub .t{text-align:right}
+.msg.you .bub .t{text-align:right}
 .bub .caret{display:inline-block;width:6px;height:14px;vertical-align:-2px;margin-left:2px;background:var(--accent);animation:blink 1.1s step-end infinite}
 @keyframes blink{50%{opacity:0}}
 .tool{align-self:flex-start;display:flex;align-items:center;gap:8px;margin-left:39px;font-family:var(--mono);font-size:10.5px;color:var(--mute);opacity:.9;cursor:pointer}

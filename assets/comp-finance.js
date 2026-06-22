@@ -1,5 +1,5 @@
-// comp-finance.js — FAITHFUL vanilla port of kimi-web FinancePage
-// (src/app/room/calendar/finance/page.tsx). Three-tab month-spend view:
+// comp-finance.js — a month-spend finance view component.
+// Three-tab month-spend view:
 //   信  envelope  — by currency (Bank autopay / JPY / USD / Non-JPY), envelope cards
 //   园  garden    — rose-by-category (Rent/Food/Tools/Shop/Bills/Play),
 //                   StandingRoseGarden: SVG stems+leaves, rose heads masked from
@@ -26,14 +26,14 @@ window.Comp.finance = function (el) {
       '.fin-head .mo{font-family:var(--serif);font-style:italic;font-size:40px;line-height:1;letter-spacing:.02em;color:var(--ink)}',
       '.fin-moon{display:flex;justify-content:center;margin-top:14px}',
       // real-time moon disc/shadow colorway — derived from palette family, theme-keyed
-      // (canon finance: night = gold/cream disc on void shadow; day = light rose-gold).
+      // (finance: night = gold/cream disc on void shadow; day = light rose-gold).
       '.fin-moon{--moon-core:#fff6e0;--moon-light:#e4d4b0;--moon-edge:#9b7c50;--moon-dark:rgba(14,8,4,0.94)}',
       '[data-theme="day"] .fin-moon{--moon-core:#fff8f0;--moon-light:#f4e8d0;--moon-edge:#caa07a;--moon-dark:rgba(220,207,194,0.85)}',
       '.fin-moon svg{filter:drop-shadow(0 0 8px rgba(193,154,86,0.30)) drop-shadow(0 0 14px rgba(193,154,86,0.16))}',
       '[data-theme="day"] .fin-moon svg{filter:drop-shadow(0 0 8px rgba(168,80,94,0.26)) drop-shadow(0 0 13px rgba(168,80,94,0.14))}',
       // ── 园 garden ──
       '.fin-garden{position:relative;margin:10px auto 0;width:360px}',
-      // rose head — canon AlphaRose: positioned wrapper + masked inner span.
+      // rose head — AlphaRose: positioned wrapper + masked inner span.
       // wrapper carries left/top/rotate/halo; the span is the colored bloom
       // masked from assets/rose-finance.png (maskSize contain, centered).
       '.fin-garden .rose-wrap{position:absolute;line-height:0}',
@@ -97,10 +97,10 @@ window.Comp.finance = function (el) {
 
   // ── generic demo dataset ──────────────────────────────────────────────
   // amounts/merchants are neutral placeholders. mixed-currency to exercise
-  // the 信 (by-currency) + 卡 (by-card) buckets like the canon.
+  // the 信 (by-currency) + 卡 (by-card) buckets, by-currency and by-card.
   var MONTH = 'June';
 
-  // 园 — by spend category (canon order Rent/Food/Tools/Shop/Bills/Play),
+  // 园 — by spend category (order Rent/Food/Tools/Shop/Bills/Play),
   // amt in k-JPY-equivalent (drives stem height + the ¥{amt}k label).
   // colors pulled from cc-gild tokens (never hardcode) — token name per category.
   var GARDEN = (window.CC_COMP&&window.CC_COMP.finance&&window.CC_COMP.finance.garden) || [
@@ -112,7 +112,7 @@ window.Comp.finance = function (el) {
     { cat: 'Play',  amt: 142, color: 'var(--sage)' }
   ];
 
-  // 信 — by currency (4 envelope cards). amount string mirrors canon
+  // 信 — by currency (4 envelope cards). amount string is generic
   // (¥ / $ / CNY joined by " / "), rows are date · merchant · amount.
   var ENVELOPES = (window.CC_COMP&&window.CC_COMP.finance&&window.CC_COMP.finance.envelopes) || [
     {
@@ -151,7 +151,7 @@ window.Comp.finance = function (el) {
     }
   ];
 
-  // 卡 — by card (canon CARD_DISPLAY labels/subs/stamps, generic amounts).
+  // 卡 — by card (CARD_DISPLAY labels/subs/stamps, generic amounts).
   var CARDS = (window.CC_COMP&&window.CC_COMP.finance&&window.CC_COMP.finance.cards) || [
     {
       stamp: 'A', label: 'Card · ••00', sub: 'intl', amount: '320 CNY', count: 2,
@@ -197,13 +197,13 @@ window.Comp.finance = function (el) {
     }
   ];
 
-  // summary line (canon: 刷卡 spending · 引落 bank · N 笔)
+  // summary line (刷卡 spending · 引落 bank · N 笔)
   var SUMMARY = '刷卡 ¥48,600 · $96.00 · 320 CNY · 引落 ¥184,200 · 17 笔';
 
   var tab = 'garden'; // envelope | garden | card
 
   // ── real-time moon phase (garden tab backdrop) ──
-  // Synodic calc ported from kimi-web src/lib/moon-phase.ts (getMoonPhase →
+  // Synodic moon-phase calc (getMoonPhase →
   // fraction): ref new moon 2000-01-06 18:14 UTC, synodic month 29.530588853d.
   // Uses today's date so the lit shape matches the actual sky.
   var REF_NEW_MOON_MS = Date.UTC(2000, 0, 6, 18, 14, 0);
@@ -215,7 +215,7 @@ window.Comp.finance = function (el) {
     return frac; // 0=new → 0.25 first-quarter → 0.5 full → 0.75 last-quarter → 1
   }
 
-  // ── two-arc shadow render (kimi-web MoonPhaseSvg.tsx technique) ──
+  // ── two-arc shadow render (two-arc shadow technique) ──
   // Lit disc (token gold/cream gradient) underneath, dark shadow path on top.
   // cos(2π·phase) drives the terminator ellipse rx; sweep flags place the dark
   // limb. New (0)=full shadow → first-q (0.25)=right half lit → full (0.5)=no
@@ -258,8 +258,8 @@ window.Comp.finance = function (el) {
       '</svg>';
   }
 
-  // ── 园 StandingRoseGarden — faithful geometry from the canon SVG ──
-  // pal = canon StandingRoseGarden palette (finance/page.tsx), per theme:
+  // ── 园 StandingRoseGarden — faithful geometry from the source SVG ──
+  // pal = StandingRoseGarden palette, per theme:
   //   stem (stems+leaves+vine), halo (ground dots + halo gradient + bloom glow),
   //   label (category ink), mute (¥ amt ink), fox (fox silhouette), haloOp.
   function gardenHTML(data, pal) {
@@ -274,13 +274,13 @@ window.Comp.finance = function (el) {
     for (var k = 1; k < data.length; k++) if (data[k].amt > data[tallestIdx].amt) tallestIdx = k;
     var tallestX = colW * tallestIdx + colW / 2;
 
-    // dots on the ground vine (canon: haloColor)
+    // dots on the ground vine (haloColor)
     var groundDots = [0.2, 0.5, 0.8].map(function (t) {
       return '<circle cx="' + (12 + (w - 24) * t).toFixed(1) + '" cy="' + (groundY + 1) +
         '" r="1.4" fill="' + pal.halo + '" opacity="0.7"/>';
     }).join('');
 
-    // stems + leaves (one <g> per category) — canon stemColor (= leafColor)
+    // stems + leaves (one <g> per category) — stemColor (= leafColor)
     var stems = data.map(function (d, i) {
       var stemH = minH + (maxH - minH) * (d.amt / max);
       var x = colW * i + colW / 2;
@@ -320,7 +320,7 @@ window.Comp.finance = function (el) {
           '<stop offset="100%" stop-color="' + pal.halo + '" stop-opacity="0"/>' +
         '</radialGradient></defs>' +
         '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#finGardenHalo)"/>' +
-        // double ground vine (canon stemColor)
+        // double ground vine (stemColor)
         '<line x1="12" y1="' + groundY + '" x2="' + (w - 12) + '" y2="' + groundY + '" stroke="' + pal.stem + '" stroke-width="0.7" opacity="0.7"/>' +
         '<line x1="20" y1="' + (groundY + 1.6) + '" x2="' + (w - 20) + '" y2="' + (groundY + 1.6) + '" stroke="' + pal.stem + '" stroke-width="0.3" opacity="0.5"/>' +
         groundDots +
@@ -328,9 +328,9 @@ window.Comp.finance = function (el) {
       '</svg>';
 
     // rose heads (positioned via %-free absolute px against the 360-wide stage).
-    // canon AlphaRose geometry: wrapper at (x - sz/2, tipY - sz*0.68) so the
+    // AlphaRose geometry: wrapper at (x - sz/2, tipY - sz*0.68) so the
     // bloom sits on top of each stem tip; the masked span carries the size+color.
-    // tallest bloom gets the canon haloColor + 88 alpha glow.
+    // tallest bloom gets the haloColor + 88 alpha glow.
     var roses = data.map(function (d, i) {
       var stemH = minH + (maxH - minH) * (d.amt / max);
       var x = colW * i + colW / 2;
@@ -343,16 +343,16 @@ window.Comp.finance = function (el) {
         '</div>';
     }).join('');
 
-    // fox beside the tallest rose (canon: isDay ? #1a0e0a : #d8d0c8)
+    // fox beside the tallest rose (isDay ? #1a0e0a : #d8d0c8)
     var fox = '<span class="fox" style="left:' + (tallestX + 8).toFixed(1) + 'px;top:' + (groundY - 34) + 'px;background-color:' + pal.fox + '"></span>';
 
-    // category labels below ground (canon labelInk)
+    // category labels below ground (labelInk)
     var labels = data.map(function (d, i) {
       var x = colW * i + colW / 2;
       return '<div class="glab" style="left:' + (x - colW / 2).toFixed(1) + 'px;bottom:8px;width:' + colW.toFixed(1) + 'px;color:' + pal.label + '">' + d.cat + '</div>';
     }).join('');
 
-    // ¥{amt}k above each rose (canon muteInk)
+    // ¥{amt}k above each rose (muteInk)
     var amts = data.map(function (d, i) {
       var stemH = minH + (maxH - minH) * (d.amt / max);
       var x = colW * i + colW / 2;
@@ -388,7 +388,7 @@ window.Comp.finance = function (el) {
       '</div>';
   }
 
-  // ── tab bar icons (inline SVG, faithful to canon EnvelopeIcon/Flower/CardIcon) ──
+  // ── tab bar icons (inline SVG, faithful to EnvelopeIcon/Flower/CardIcon) ──
   function envelopeIcon() {
     return '<svg width="13" height="10" viewBox="0 0 16 12" aria-hidden="true">' +
       '<rect x="1" y="2" width="14" height="9" fill="none" stroke="currentColor" stroke-width="0.9"/>' +
@@ -413,9 +413,9 @@ window.Comp.finance = function (el) {
       '<rect x="9" y="6.4" width="5" height="1.2" fill="none" stroke="currentColor" stroke-width="0.5"/></svg>';
   }
 
-  // canon finance garden palette (page.tsx DAY_PALETTE / NIGHT_PALETTE), per theme.
+  // finance garden palette (DAY_PALETTE / NIGHT_PALETTE), per theme.
   function isDay() { return document.documentElement.getAttribute('data-theme') === 'day'; }
-  // category bloom colors, canon order Rent/Food/Tools/Shop/Bills/Play.
+  // category bloom colors, order Rent/Food/Tools/Shop/Bills/Play.
   var GARDEN_COLORS_DAY   = ['#5A1820', '#A42B5E', '#8A6428', '#C7547E', '#8A2840', '#C89548'];
   var GARDEN_COLORS_NIGHT = ['#a08a6c', '#c8576f', '#b8a070', '#9a7a7a', '#c4a78a', '#9a7a7a'];
   function gardenPalette() {
@@ -482,7 +482,7 @@ window.Comp.finance = function (el) {
     });
   }
 
-  // re-render on theme flip so the garden's canon day/night palette repaints
+  // re-render on theme flip so the garden's day/night palette repaints
   // (stems, bloom colors, halo, labels are JS-computed, not pure-CSS tokens).
   var themeObserver = new MutationObserver(function () {
     if (el.querySelector('.fin-wrap')) render();

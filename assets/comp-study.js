@@ -1,6 +1,6 @@
 /* comp-study.js — STUDY panel: a bookshelf of spines + desk-row list.
    Vanilla, no framework, no build. Attaches to window.Comp.study(el).
-   Ports the visual essence of kimi-web/room/study (bookshelf + WRITING/READING
+   Ports the visual essence of a study room (bookshelf + WRITING/READING
    rows) into cc-gild. Reuses v2.css tokens — no hardcoded colors.
    GENERIC DEMO content only. Persona: kimi / you. */
 (function (w) {

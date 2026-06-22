@@ -1,13 +1,13 @@
-/* comp-calendar.js — standalone vanilla month calendar, deepened to canon fidelity
-   from kimi-web RoomCalendar.tsx. Mucha 描金 / Art Nouveau, dark ground + day mode.
+/* comp-calendar.js — a standalone vanilla month-calendar component.
+   Mucha 描金 / Art Nouveau, dark ground + day mode.
 
-   CANON-FAITHFUL feature set:
+   Feature set:
      · 7-col monday-first month grid, prev/next nav, oldstyle day numbers
      · faint moon-phase wash on cells (radial gold) — decorative, kept from v1
-     · STRUCTURED EVENTS per day (title + time + type), like the canon DayData.event
+     · STRUCTURED EVENTS per day (title + time + type), like DayData.event
        — not a bare text line. A day can hold several; cell shows first + "+N".
-     · MED DOSE — the canon ROSE DOSE control. A day's med is a dose level on the
-       canon 7-stage cycle (0 → 0.5 → 1 → 1.5 → 2 → 2.5 → 3), drawn with the canon
+     · MED DOSE — the ROSE DOSE control. A day's med is a dose level on the
+       7-stage cycle (0 → 0.5 → 1 → 1.5 → 2 → 2.5 → 3), drawn with the
        rose icons (assets/rose-cal-a/b/c.png) masked + recolored by token: stage
        0 = bud outline, then a-style (1-2), b-style stem (3-4), c-style double
        bloom (5-6); odd half-stages render a half-filled (clip) rose. Tap the rose
@@ -16,7 +16,7 @@
        same CSS mask, so the day-mode dose rose reads green, not washed pink.
        GENERIC: a demo "dose" control, NO real medication names.
      · FOX-WRITTEN events — agent "kimi" mirrored google-calendar events, rendered
-       with the CANON fox icon assets/fox-bw-sit.png (night-mode invert, like canon).
+       with the fox icon assets/fox-bw-sit.png (night-mode invert).
        Read-only in the editor under a "kimi wrote · calendar" header.
      · localStorage persistence (demo key) + a live agenda rail.
 
@@ -31,8 +31,8 @@
   root.Comp = root.Comp || {};
 
   var LS_KEY = "ccgild:cal:demo:v3";       // persisted user-added day data (v3: dose stage)
-  var FOX_SRC = "assets/fox-bw-sit.png";   // canon fox icon (copied from kimi-web)
-  // canon rose dose glyphs (kimi-web public/icons) are pulled in via the
+  var FOX_SRC = "assets/fox-bw-sit.png";   // fox icon
+  // rose dose glyphs are pulled in via the
   // .rm-a/.rm-b/.rm-c CSS mask classes (per-stage), not JS constants.
   var WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
   var EN_MONTH = ["January", "February", "March", "April", "May", "June",
@@ -40,7 +40,7 @@
   var CN_MONTH = ["一月", "二月", "三月", "四月", "五月", "六月",
     "七月", "八月", "九月", "十月", "十一月", "十二月"];
 
-  // event types — generic, canon parallels 事件 / 用药. Each carries a token-driven
+  // event types — generic, parallels 事件 / 用药. Each carries a token-driven
   // marker so colors stay theme-aware (no hardcoded hex).
   var EVENT_TYPES = [
     { key: "event", label: "事件 · event" },
@@ -70,13 +70,13 @@
   }
 
   // theme detection — read <html data-theme>; default night. Used to invert the
-  // black fox PNG in night mode (matches canon: filter invert(1) on night bg).
+  // black fox PNG in night mode (matches: filter invert(1) on night bg).
   function isNight() {
     var t = document.documentElement.getAttribute("data-theme");
     return t !== "day";
   }
 
-  // ---- canon dose model (RoomCalendar.tsx) ---------------------------------
+  // ---- dose model ---------------------------------
   // 7-stage cycle: stage 0..6 → dose 0 / 0.5 / 1 / 1.5 / 2 / 2.5 / 3.
   // tap cycles 0→1→2→…→6→0. Glyph: stage 0 = bud outline; else a/b/c PNG masked,
   // odd stage = half-filled (clipped) bloom. NO real med name — pure "dose" demo.
@@ -87,7 +87,7 @@
     return d === 0 ? "" : String(d);
   }
   // ---- demo data: events the agent "kimi" wrote ⇒ fox marker ---------------
-  // keyed YYYY-MM-DD. Generic, no real persona narrative. Mirrors canon AkiraEvent
+  // keyed YYYY-MM-DD. Generic, no real persona narrative. Mirrors a generic per-day event type
   // shape { time, title, location? } so the editor can render it faithfully.
   function kimiEventsFor(y, m) {
     var mk = function (d, time, title, loc) {
@@ -101,7 +101,7 @@
       mk(26, "09:15", "inbox sweep")
     ];
   }
-  // group fox events by date (a day may hold several, like canon)
+  // group fox events by date (a day may hold several, like the source)
   function kimiByDateFor(y, m) {
     var map = {};
     kimiEventsFor(y, m).forEach(function (e) {
@@ -150,14 +150,14 @@
       '<circle cx="40" cy="5.5" r="0.9" fill="var(--cal-gold)"/>' +
       '<circle cx="160" cy="10.5" r="0.9" fill="var(--cal-gold)"/></svg>';
   }
-  // gold double-segment with center diamond stake (the canon "EventLine")
+  // gold double-segment with center diamond stake (the "EventLine")
   function eventLine() {
     return '<svg class="cc-cal__line" viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true">' +
       '<line x1="0" y1="3" x2="44" y2="3" stroke="var(--cal-gold)" stroke-width="0.7" opacity="0.85"/>' +
       '<line x1="56" y1="3" x2="100" y2="3" stroke="var(--cal-gold)" stroke-width="0.7" opacity="0.85"/>' +
       '<path d="M50 0 L53 3 L50 6 L47 3 Z" fill="var(--cal-gold)"/></svg>';
   }
-  // small top-right vine sprig (canon "VineSprig")
+  // small top-right vine sprig ("VineSprig")
   function sprig() {
     return '<svg class="cc-cal__sprig" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">' +
       '<path d="M2 14 Q4 10 7 9 Q11 8 13 4" fill="none" stroke="var(--cal-gold)" stroke-width="0.5" stroke-linecap="round"/>' +
@@ -165,24 +165,24 @@
       '<ellipse cx="10" cy="6" rx="1.4" ry="0.7" transform="rotate(-30 10 6)" fill="var(--cal-gold)"/>' +
       '<circle cx="13" cy="4" r="0.6" fill="var(--cal-gold)"/></svg>';
   }
-  // the canon ROSE DOSE glyph. stage 0 = hairline bud outline (no dose); stage 1-6
-  // = the canon rose-cal PNG (a/b/c by stage) masked + recolored by token (rose in
+  // the ROSE DOSE glyph. stage 0 = hairline bud outline (no dose); stage 1-6
+  // = the rose-cal PNG (a/b/c by stage) masked + recolored by token (rose in
   // night, sage/green in day via the .cc-cal__rose CSS). Odd stages render a
   // half-filled bloom: a 30%-opacity ghost behind + a left-half clipped full layer.
-  // `size` px (default 12, canon). Full-bloom full-dose (stage 6) gets a soft halo.
+  // `size` px (default 12). Full-bloom full-dose (stage 6) gets a soft halo.
   function roseDose(stage, size) {
     stage = clampStage(stage);
     size = size || 12;
     var box = '<span class="cc-cal__rose" aria-hidden="true" style="width:' + size +
       'px;height:' + size + 'px">';
     if (stage === 0) {
-      // bud outline — hairline, no fill (matches canon stage-0 SVG)
+      // bud outline — hairline, no fill (matches the stage-0 SVG)
       return box +
         '<svg width="' + size + '" height="' + size + '" viewBox="0 0 18 18">' +
         '<path d="M9 3 Q12 4 12 7 Q12 9 11 10.5 Q12 11 12 12.5 Q11 14 9 14 Q7 14 6 12.5 Q6 11 7 10.5 Q6 9 6 7 Q6 4 9 3 Z" ' +
         'fill="none" stroke="var(--cal-hair)" stroke-width="0.9"/></svg></span>';
     }
-    // canon RoseStageIcon mapping: stage>=5 → c (double), >=3 → b (stem), else a.
+    // RoseStageIcon mapping: stage>=5 → c (double), >=3 → b (stem), else a.
     var rmCls = stage >= 5 ? "rm-c" : stage >= 3 ? "rm-b" : "rm-a";
     var half = (stage % 2) === 1;            // 1/3/5 → half dose
     var halo = stage === MAX_STAGE ? '<span class="rh"></span>' : "";
@@ -192,15 +192,15 @@
   }
   // legend / agenda still want a fixed-dose sample rose — show a full single bloom
   function roseSample() { return roseDose(2, 11); }
-  // CANON fox icon — assets/fox-bw-sit.png. night bg is dark → invert the black
-  // silhouette to white (mirrors RoomCalendar.tsx filter: invert(1) on night).
+  // fox icon — assets/fox-bw-sit.png. night bg is dark → invert the black
+  // silhouette to white (mirrors the night filter: invert(1) on night).
   function foxImg(size) {
     size = size || 15;
     var inv = isNight() ? ' style="filter:invert(1)"' : '';
     return '<img class="cc-cal__fox" src="' + FOX_SRC + '" alt="kimi wrote" ' +
       'width="' + size + '" height="' + size + '"' + inv + '>';
   }
-  // small diamond used in agenda + legend for user events (canon legend stake)
+  // small diamond used in agenda + legend for user events (legend stake)
   function diamondMini() {
     return '<svg viewBox="0 0 8 8" width="7" height="7" aria-hidden="true">' +
       '<path d="M4 0 L8 4 L4 8 L0 4 Z" fill="var(--cal-gold)"/></svg>';
@@ -214,14 +214,14 @@
     // never a literal rgba — so day mode renders rose-hairline, not black lines.
     s.textContent = [
       // transparent ground — the calendar shows the cc-gild panel through it
-      // (day = white-pink, night = dark), NOT an opaque canon paper card. Canon
+      // (day = white-pink, night = dark), NOT an opaque paper card. The
       // ink + sage gridlines still apply on top.
       ".cc-cal{padding:10px 8px 8px;background:transparent;color:var(--cal-ink);font-family:var(--serif)}",
-      // ── canon CalPalette (kimi-web calendar/theme.ts) driven vars. The calendar
+      // ── CalPalette-driven vars. The calendar
       //    has its OWN palette — NOT the cc-gild global gold/rose tokens. night =
       //    NIGHT_PALETTE, day = DAY_PALETTE. Everything calendar-specific (event
       //    line, today, dose rose + dose text, hairlines, weekend, note) reads
-      //    these, so day/night match kimi-web exactly.
+      //    these, so day/night match kimi-room exactly.
       ".cc-cal{--cal-page:#080605;--cal-paper:#0e0c0a;--cal-paperhi:#181410;--cal-ink:#ece2cc;--cal-inksoft:rgba(236,226,204,.72);--cal-inkmute:rgba(236,226,204,.4);--cal-gold:#d4af6c;--cal-med:#c8576f;--cal-medtext:#d4af6c;--cal-halo:rgba(200,87,111,.4);--cal-line:#8aa872;--cal-flowmed:#a04d42;--cal-hair:rgba(138,168,114,.3);--cal-cellline:rgba(138,168,114,.11);--cal-today:#d4af6c;--cal-weekend:rgba(200,120,120,.06);--cal-note:#9eb5d2}",
       "[data-theme='day'] .cc-cal{--cal-page:#ebdfd4;--cal-paper:#dccfc2;--cal-paperhi:#e3d3c5;--cal-ink:#1a0e0a;--cal-inksoft:rgba(26,14,10,.7);--cal-inkmute:rgba(26,14,10,.5);--cal-gold:#c89548;--cal-med:#7a8a6a;--cal-medtext:#7a8a6a;--cal-halo:rgba(122,138,106,.32);--cal-line:#7a8a6a;--cal-flowmed:#A42B5E;--cal-hair:rgba(122,138,106,.34);--cal-cellline:rgba(122,138,106,.13);--cal-today:#c89548;--cal-weekend:rgba(168,48,64,.05);--cal-note:#9a7888}",
       ".cc-cal__head{text-align:center;margin-bottom:12px}",
@@ -253,7 +253,7 @@
       ".cc-cal__cell:hover:not(.pad){background:var(--cal-weekend)}",
       ".cc-cal__cell.pad{cursor:default;background:transparent}",
       ".cc-cal__cell.we{background:var(--cal-weekend)}",
-      // today marker — canon todayBorder gold + paperHi-ish highlight
+      // today marker — todayBorder gold + paperHi-ish highlight
       ".cc-cal__cell.today{border-left:2px solid var(--cal-today);background:rgba(193,154,86,.10)}",
       ".cc-cal__rowtop{display:flex;align-items:baseline;justify-content:space-between;gap:6px}",
       ".cc-cal__dn{font-family:var(--serif);font-size:20px;color:var(--cal-inksoft);font-feature-settings:'onum' 1;font-variant-numeric:oldstyle-nums;line-height:1}",
@@ -267,22 +267,22 @@
       "[data-theme='day'] .cc-cal__moon{top:9px;right:24px;width:18px;height:18px;" +
         "background:radial-gradient(circle at 40% 34%,rgba(168,80,94,calc(var(--mw,.2) * 0.5)),transparent 62%)}",
       ".cc-cal__line{width:100%;height:6px;display:block;margin-top:3px}",
-      // user structured event line (canon event row)
+      // user structured event line (event row)
       ".cc-cal__evt{font-size:10px;color:var(--cal-inksoft);font-style:italic;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
       ".cc-cal__evt .t{color:var(--cal-gold);font-style:italic;margin-right:4px}",
       ".cc-cal__evt .more{color:var(--cal-inkmute);font-style:normal;margin-left:3px}",
-      // fox row (kimi-written) — image marker + time + title (canon DayCell akira row)
+      // fox row (kimi-written) — image marker + time + title (DayCell agent row)
       ".cc-cal__foxrow{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;color:var(--cal-inkmute);font-style:italic}",
       ".cc-cal__foxrow span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
       ".cc-cal__fox{object-fit:contain;flex:0 0 auto}",
       // dose row in a cell — rose in night, green in day (match the glyph tint)
       ".cc-cal__medrow{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;color:var(--cal-medtext);font-style:italic;font-variant-numeric:tabular-nums}",
       ".cc-cal__medrow span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
-      // ROSE DOSE glyph — masked canon PNG recolored by token. NIGHT = rose tint,
+      // ROSE DOSE glyph — masked PNG recolored by token. NIGHT = rose tint,
       // DAY = green (var(--sage)) so the day-mode dose rose reads green, not washed.
       ".cc-cal__rose{position:relative;display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;flex:0 0 auto;vertical-align:-2px}",
       ".cc-cal__rose svg{position:relative;display:block}",
-      // masked rose fill layer — color = canon p.med (var(--cal-med)). The mask
+      // masked rose fill layer — color = p.med (var(--cal-med)). The mask
       // PNG is carried by per-stage .rm-a/.rm-b/.rm-c classes, NOT a CSS var,
       // because WebKit/Safari does not resolve var() inside mask-image (that was
       // why the dose rose showed up blank on Mac).
@@ -295,7 +295,7 @@
       // half dose: ghost back layer + left-half-clipped full layer
       ".cc-cal__rose .rm.ghost{opacity:.32}",
       ".cc-cal__rose .rm.half{clip-path:inset(0 50% 0 0)}",
-      // halo on full bloom (stage 6) — canon medHalo
+      // halo on full bloom (stage 6) — medHalo
       ".cc-cal__rose .rh{position:absolute;inset:-2px;border-radius:50%;background:radial-gradient(circle,var(--cal-halo) 0%,transparent 80%)}",
       // editor popover, anchored under the clicked cell
       ".cc-cal__pop{position:absolute;z-index:40;width:248px;background:var(--cal-paper);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:0.6px solid var(--cal-hair);border-radius:8px;padding:13px 13px 12px;box-shadow:0 12px 34px rgba(0,0,0,.5);font-family:var(--serif)}",
@@ -305,7 +305,7 @@
       ".cc-cal__pop .px{background:none;border:none;color:var(--cal-inkmute);font-size:16px;line-height:1;cursor:pointer;font-family:var(--serif)}",
       ".cc-cal__pop label{display:block;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--cal-inkmute);margin:9px 0 5px}",
       ".cc-cal__pop label:first-of-type{margin-top:0}",
-      // canon "kimi wrote" read-only block
+      // "kimi wrote" read-only block
       ".cc-cal__kimi{margin-bottom:11px;padding:9px 10px;background:var(--ghost);border:0.6px solid var(--cal-hair);border-radius:6px}",
       ".cc-cal__kimi-h{font-family:var(--serif);font-style:italic;font-size:9px;letter-spacing:.2em;color:var(--cal-gold);margin-bottom:6px}",
       ".cc-cal__kimi-row{display:flex;align-items:flex-start;gap:7px;font-size:11px;color:var(--cal-inksoft);line-height:1.45;margin-bottom:4px}",
@@ -360,7 +360,7 @@
       ".cc-cal__legend span{display:inline-flex;align-items:center;gap:6px}",
       ".cc-cal__legend .moondot{width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 38% 32%,rgba(193,154,86,.42),transparent 70%);border:0.5px solid var(--cal-hair)}",
       ".cc-cal__hint{text-align:center;font-style:italic;font-size:10px;color:var(--cal-inkmute);margin-top:10px;letter-spacing:.04em}",
-      // Mobile: stack agenda below the grid. All hairlines come from the canon
+      // Mobile: stack agenda below the grid. All hairlines come from the source
       // --cal-hair var (set per-theme at the top), so day/night need no overrides.
       "@media(max-width:640px){.cc-cal__body{grid-template-columns:1fr}.cc-cal__agenda{border-left:none;border-top:0.6px solid var(--cal-hair);padding-left:0;padding-top:10px}.cc-cal__pop{width:220px}}"
     ].join("");
@@ -440,7 +440,7 @@
       // working copy
       var draft = {
         events: day.events.map(function (e) { return { title: e.title, time: e.time || "", type: e.type || "event" }; }),
-        dose: day.dose,          // canon stage 0..6
+        dose: day.dose,          // stage 0..6
         newType: "event"
       };
 
@@ -479,7 +479,7 @@
       }
 
       // ROSE DOSE control — tap the rose to cycle 0→0.5→1→…→3→0. The glyph grows /
-      // half-fills with the canon a/b/c rose PNGs. A "−" resets to 0. Generic dose
+      // half-fills with the a/b/c rose PNGs. A "−" resets to 0. Generic dose
       // demo, no real med name.
       function doseCtrlHtml() {
         var on = draft.dose > 0;

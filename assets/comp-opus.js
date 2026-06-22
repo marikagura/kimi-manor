@@ -1,5 +1,5 @@
 // comp-opus.js — "opus score" demo panel for cc-gild.
-// Vanilla port of the visual essence of kimi-web OpusSheet (grand-staff score sheet).
+// A grand-staff score-sheet widget (visual essence, vanilla).
 // Decorative demo only: a treble + bass grand staff, clefs, time sig, and a phrase
 // of gold noteheads (filled + hollow), stems, beams, one slur. GENERIC content.
 // Persona: kimi / you. Reuses cc-gild design tokens via CSS vars — no hardcoded colors.

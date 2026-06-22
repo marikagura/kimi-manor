@@ -1,4 +1,4 @@
-// theme.js — design tokens ported verbatim from kimi-room
+// theme.js — design tokens.
 // (lib/mucha-tokens.ts ivory.dark + lib/day-theme.ts ROSE_GOTHIC_DAY).
 // Two colorways: night (Mucha ivory dark, default) + day (rose-gothic).
 

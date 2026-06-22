@@ -206,8 +206,8 @@ body{overflow:hidden}
    v2.css that reads near-black on light paper. Give them a light paper radial in
    day: kimi = gold-tinted cream, you = rose-tinted cream; letter stays the
    accent/rose stroke colour so it's still legible. */
-[data-theme="day"] .msg.akira .ava{background:radial-gradient(circle at 35% 30%,#fffaf2,#f1e6d6)}
-[data-theme="day"] .msg.ito .ava{background:radial-gradient(circle at 35% 30%,#fff6f4,#f6e3e4)}
+[data-theme="day"] .msg.kimi .ava{background:radial-gradient(circle at 35% 30%,#fffaf2,#f1e6d6)}
+[data-theme="day"] .msg.you .ava{background:radial-gradient(circle at 35% 30%,#fff6f4,#f6e3e4)}
 [data-theme="day"] .reclose{background:rgba(255,251,248,0.6)}
 [data-theme="day"] .weather-pet{filter:drop-shadow(0 0 8px rgba(168,80,94,0.20))}
 /* casement chrome → light paper in day (frame, surround mask, shutters, base) */
@@ -228,7 +228,7 @@ body{overflow:hidden}
 /* memory review single card → light rose paper, not black/grey */
 [data-theme="day"] .rcard{background:linear-gradient(180deg,rgba(255,250,246,0.66),rgba(246,230,225,0.5))}
 
-/* ---- memory review: wax-seal double-ring buttons (canon WaxSeal) ---- */
+/* ---- memory review: wax-seal double-ring buttons (WaxSeal) ---- */
 .rcard .acts{gap:8px}
 .rcard .ring{background:radial-gradient(circle at 50% 38%,rgba(193,154,86,.12),rgba(0,0,0,.16));
   box-shadow:inset 0 0 0 3px var(--void), inset 0 0 0 4px var(--hair)}

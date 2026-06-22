@@ -34,7 +34,7 @@
 
   function frameIron(){
     const op='M30 96 A54 54 0 0 1 138 96 V204 H30 Z';
-    // fine radial muntins in the arch crown (hairline, canon fidelity)
+    // fine radial muntins in the arch crown (hairline)
     let fan=''; for(let k=1;k<=7;k++){const a=Math.PI*(k/8);fan+=`<line x1="84" y1="96" x2="${(84-54*Math.cos(a)).toFixed(1)}" y2="${(96-54*Math.sin(a)).toFixed(1)}"/>`;}
     // delicate pearls at muntin crossings (replaces chunky diamond bosses)
     let bos=''; [124,152,180].forEach(y=>{bos+=`<circle cx="64" cy="${y}" r="1.5" fill="currentColor"/><circle cx="104" cy="${y}" r="1.5" fill="currentColor"/>`;});

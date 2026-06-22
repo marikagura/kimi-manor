@@ -1345,7 +1345,7 @@ html[data-theme="day"] .cv-th-day{display:block}
     return moon + roseDial(size);
   }
 
-  // Canon /room day-mode hero — the real RoseBloomDial: a single Mucha-pink rose
+  // /room day-mode hero — the real RoseBloomDial: a single Mucha-pink rose
   // head (rose-single-pink.png) with slow rotate (90s) + breath (1.0→1.04) + a
   // soft rose halo pulse. Shown ONLY in day mode (see .mp-rose CSS). The breath +
   // halo live on wrapper layers (.mp-rose / .mp-rose-halo) so the image's own
@@ -1884,8 +1884,8 @@ html[data-theme="day"] .cv-th-day{display:block}
       ".cc-cal__rose .rm.half{clip-path:inset(0 50% 0 0)}",
       // halo on full bloom (stage 6) — medHalo
       ".cc-cal__rose .rh{position:absolute;inset:-2px;border-radius:50%;background:radial-gradient(circle,var(--cal-halo) 0%,transparent 80%)}",
-      // editor — full-cover modal over the calendar (RoomCalendar
-      // CellEditor pattern): backdrop dims the cal, the card centers, and
+      // editor — full-cover modal over the calendar (a CellEditor
+      // pattern): backdrop dims the cal, the card centers, and
       // tap-backdrop / × / CANCEL / Esc all close it. No off-screen anchoring —
       // the old popover opened below the clicked cell and could land past the
       // panel edge with its × unreachable ("卡住"); a centered card can't.
@@ -2600,11 +2600,13 @@ html[data-theme="day"] .cv-th-day{display:block}
         ctx.beginPath(); ctx.moveTo(o.a.x,o.a.y); ctx.quadraticCurveTo(mx,my,o.b.x,o.b.y); ctx.stroke(); ctx.restore(); });
       var ord=[]; for(var id2 in pp){ ord.push({id:id2,p:pp[id2],node:node3d[id2].node}); } ord.sort(function(x,y){ return x.p.z-y.p.z; });
       ord.forEach(function(o){ var p=o.p,node=o.node; var depthA=0.32+((p.z+1.1)/2.2)*0.68; var col=nodeCol(node,T), sz=baseSize(node)*p.s;
-        var isSurf=surfaced[o.id], isLink=linked[o.id], pulse=isSurf?0.6+0.4*Math.sin(t*0.08):1;
+        var isSurf=surfaced[o.id], isLink=linked[o.id], ph=hash01(o.id).a*6.283;
+        var pulse=isSurf?0.55+0.45*Math.sin(t*0.035+ph):1;
+        var beat=node.kind==='memory'&&node.weight>0.6, osc=beat?Math.sin(t*0.03+ph):0, brad=beat?0.85+0.28*osc:1, bal=beat?0.72+0.4*osc:1;
         ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over';
         if(isSurf){ var h1=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,24*pulse); h1.addColorStop(0,hexA(T.rose,0.28*pulse)); h1.addColorStop(1,hexA(T.rose,0)); ctx.fillStyle=h1; ctx.beginPath(); ctx.arc(p.x,p.y,24*pulse,0,7); ctx.fill(); }
         else if(isLink){ var h2=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,15); h2.addColorStop(0,hexA(T.warmth,0.22)); h2.addColorStop(1,hexA(T.warmth,0)); ctx.fillStyle=h2; ctx.beginPath(); ctx.arc(p.x,p.y,15,0,7); ctx.fill(); }
-        var bl=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,sz*2.2); bl.addColorStop(0,hexA(col,0.24*depthA)); bl.addColorStop(1,hexA(col,0)); ctx.fillStyle=bl; ctx.beginPath(); ctx.arc(p.x,p.y,sz*2.2,0,7); ctx.fill();
+        var bl=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,sz*2.2*brad); bl.addColorStop(0,hexA(col,0.24*depthA*bal)); bl.addColorStop(1,hexA(col,0)); ctx.fillStyle=bl; ctx.beginPath(); ctx.arc(p.x,p.y,sz*2.2*brad,0,7); ctx.fill();
         ctx.globalAlpha=depthA*0.9; ctx.fillStyle=node.kind==='entity'?T.goldBright:col;
         if(node.kind==='entity'){ ctx.beginPath(); ctx.moveTo(p.x,p.y-sz); ctx.lineTo(p.x+sz,p.y); ctx.lineTo(p.x,p.y+sz); ctx.lineTo(p.x-sz,p.y); ctx.closePath(); ctx.fill(); }
         else if(node.kind==='topic'){ ctx.strokeStyle=col; ctx.lineWidth=1.2; ctx.beginPath(); ctx.arc(p.x,p.y,sz+0.5,0,7); ctx.stroke(); }
@@ -2613,11 +2615,11 @@ html[data-theme="day"] .cv-th-day{display:block}
         ctx.restore(); });
       drawBell(T,dk);
     }
-    function drawRose(x,y,h,T,dk,alpha){ var img=dk?roseGold:roseDeep, pulse=0.78+0.22*Math.sin(t*0.05);
+    function drawRose(x,y,h,T,dk,alpha){ var img=dk?roseGold:roseDeep, pulse=0.84+0.16*Math.sin(t*0.022);
       ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over';
-      var gr=h*(0.9+0.12*Math.sin(t*0.05)); var g=ctx.createRadialGradient(x,y,0,x,y,gr);
+      var gr=h*(1.08+0.08*Math.sin(t*0.022)); var g=ctx.createRadialGradient(x,y,0,x,y,gr);
       var hc=dk?T.goldBright:T.rose, hc2=dk?T.gold:T.roseDeep;
-      g.addColorStop(0,hexA(hc,(dk?0.36:0.24)*pulse)); g.addColorStop(0.55,hexA(hc2,(dk?0.18:0.07)*pulse)); g.addColorStop(1,hexA(hc,0));
+      g.addColorStop(0,hexA(hc,(dk?0.32:0.24)*pulse)); g.addColorStop(0.4,hexA(hc2,(dk?0.15:0.07)*pulse)); g.addColorStop(1,hexA(hc,0));
       ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,gr,0,7); ctx.fill(); ctx.globalCompositeOperation='source-over';
       if(img.complete&&img.naturalWidth){ var w=h*(img.naturalWidth/img.naturalHeight);
         ctx.save(); ctx.globalCompositeOperation=dk?'multiply':'source-over'; var sh=ctx.createRadialGradient(x,y+h*0.46,0,x,y+h*0.46,w*0.42);
@@ -2644,7 +2646,7 @@ html[data-theme="day"] .cv-th-day{display:block}
       var knobY=domeTopY-M*0.028; ctx.strokeStyle=gold(0.6); ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(cx,domeTopY-M*0.004); ctx.lineTo(cx,knobY+4); ctx.stroke();
       ctx.fillStyle=gold(0.85); ctx.beginPath(); ctx.arc(cx,knobY,M*0.012,0,7); ctx.fill();
       ctx.strokeStyle=gold(0.5); ctx.lineWidth=0.7; ctx.beginPath(); ctx.ellipse(cx,knobY+M*0.013,M*0.017,M*0.006,0,0,7); ctx.stroke();
-      (function(){ var sy=knobY-M*0.028,r=M*0.012,tw=0.55+0.45*Math.sin(t*0.06); ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over'; ctx.strokeStyle=hexA(T.goldBright,0.4+tw*0.5); ctx.lineWidth=1;
+      (function(){ var sy=knobY-M*0.028,r=M*0.012,tw=0.6+0.4*Math.sin(t*0.03); ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over'; ctx.strokeStyle=hexA(T.goldBright,0.4+tw*0.5); ctx.lineWidth=1;
         ctx.beginPath(); ctx.moveTo(cx-r,sy); ctx.lineTo(cx+r,sy); ctx.moveTo(cx,sy-r*1.5); ctx.lineTo(cx,sy+r*1.5); ctx.moveTo(cx-r*0.5,sy-r*0.5); ctx.lineTo(cx+r*0.5,sy+r*0.5); ctx.moveTo(cx-r*0.5,sy+r*0.5); ctx.lineTo(cx+r*0.5,sy-r*0.5); ctx.stroke(); ctx.restore(); })();
       ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over'; ctx.strokeStyle=hexA(T.glass,dk?0.16:0.22); ctx.lineWidth=1.4; ctx.lineCap='round';
       ctx.beginPath(); ctx.moveTo(cx-halfW*0.55,domeTopY+M*0.08); ctx.quadraticCurveTo(cx-halfW*0.78,cy,cx-halfW*0.66,baseY-M*0.10); ctx.stroke();
@@ -2657,14 +2659,11 @@ html[data-theme="day"] .cv-th-day{display:block}
       ctx.strokeStyle=gold(0.35); ctx.lineWidth=0.6; ctx.beginPath(); ctx.ellipse(cx,baseY+M*0.02+plateH*0.55,plateW*0.92,M*0.013,0,0,7); ctx.stroke();
       settled.forEach(function(s){ var px=cx+s.dx*halfW*0.5,py=baseY+M*0.006; ctx.save(); ctx.translate(px,py); ctx.rotate(s.rot*0.4); ctx.fillStyle=hexA(T.roseDeep,dk?0.7:0.5);
         ctx.beginPath(); ctx.ellipse(0,0,M*0.013*s.sz,M*0.006*s.sz,0,0,7); ctx.fill(); ctx.restore(); });
-      (function(){ var rx0=cx,ry0=cy+M*ROSE.dy,cr=M*ROSE.h*0.72; var cg=ctx.createRadialGradient(rx0,ry0,0,rx0,ry0,cr);
-        cg.addColorStop(0,hexA(T.bg,dk?0.85:0.5)); cg.addColorStop(0.5,hexA(T.bg,dk?0.55:0.3)); cg.addColorStop(1,hexA(T.bg,0));
-        ctx.save(); ctx.globalCompositeOperation='source-over'; ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(rx0,ry0,cr,0,7); ctx.fill(); ctx.restore(); })();
       drawRose(cx,cy+M*ROSE.dy,M*ROSE.h,T,dk,0.97);
       var rx=cx,ry=cy+M*ROSE.dy; ctx.save(); ctx.globalCompositeOperation=dk?'lighter':'source-over';
-      for(var k=0;k<8;k++){ var a=(k/8)*Math.PI*2+t*0.012, rr=M*0.085*(0.65+0.35*Math.sin(t*0.04+k*1.3)), sxp=rx+Math.cos(a)*rr, syp=ry+Math.sin(a)*rr*0.82, tw=0.3+0.7*Math.abs(Math.sin(t*0.07+k*1.7));
+      for(var k=0;k<8;k++){ var a=(k/8)*Math.PI*2+t*0.008, rr=M*0.085*(0.65+0.35*Math.sin(t*0.02+k*1.3)), sxp=rx+Math.cos(a)*rr, syp=ry+Math.sin(a)*rr*0.82, tw=0.3+0.7*Math.abs(Math.sin(t*0.032+k*1.7));
         ctx.fillStyle=hexA(T.goldBright,tw*(dk?0.6:0.4)); ctx.beginPath(); ctx.arc(sxp,syp,0.9+tw,0,7); ctx.fill();
-        if(tw>0.82){ ctx.strokeStyle=hexA(T.goldBright,(tw-0.82)*2.5); ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(sxp-4,syp); ctx.lineTo(sxp+4,syp); ctx.moveTo(sxp,syp-4); ctx.lineTo(sxp,syp+4); ctx.stroke(); } }
+        if(tw>0.86){ ctx.strokeStyle=hexA(T.goldBright,(tw-0.86)*2.5); ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(sxp-4,syp); ctx.lineTo(sxp+4,syp); ctx.moveTo(sxp,syp-4); ctx.lineTo(sxp,syp+4); ctx.stroke(); } }
       ctx.restore();
       var fallTop=domeTopY+M*0.06,fallBot=baseY-M*0.03,span=fallBot-fallTop;
       petals.forEach(function(p){ var prog=((t*0.0014*p.sp+p.ph)%1+1)%1, py=fallTop+prog*span, px=cx+Math.sin(t*0.018*p.sp+p.sway)*M*0.11*(0.5+p.ph*0.5), rot=t*0.03*p.sp+p.seed*1.4, fade=Math.sin(prog*Math.PI);
@@ -4661,7 +4660,7 @@ window.Comp.radio = function (el) {
     return D.THREAD.map(item => {
       if (item.kind === 'day') return `<div class="daymark">${item.text}</div>`;
       if (item.kind === 'tool') return `<div class="tool"><span class="arrow">›</span><span class="mk">⏺</span> ${item.label}</div><div class="tool-body">${item.body}</div>`;
-      const who = item.who === 'you' ? 'y' : 'k';
+      const who = item.who === 'you' ? 'u' : 'k';
       const caret = item.stream ? '<span class="caret"></span>' : '';
       return `<div class="msg ${item.who}"><div class="ava">${who}</div><div class="bub">${item.text}${caret}<span class="t">${item.t}</span></div></div>`;
     }).join('');
@@ -6217,7 +6216,7 @@ window.Comp.radio = function (el) {
     if(hbPanel){ hbPanel.style.cursor='pointer'; hbPanel.title='tap → score'; hbPanel.addEventListener('click', function(e){ if(e.target.closest('button')) return; window.__openScore(); }); }
 
     // ── sky overlay (tap the window → big her-sky · 点星看记忆原数据 + graph walk) ──
-    var skv = document.createElement('div'); skv.className='al-studyview'; skv.id='al-skyview';
+    var skv = document.createElement('div'); skv.className='al-studyview'; skv.id='al-starmap';
     skv.innerHTML='<div style="position:relative;max-width:620px;width:94%;max-height:90vh;overflow:auto;background:var(--panel,rgba(20,14,16,0.98));border:1px solid var(--hair);border-radius:14px;padding:20px 24px 22px;box-shadow:0 30px 80px rgba(0,0,0,.6)">'+
       '<button class="al-sv-close" aria-label="close" style="position:absolute;top:12px;right:15px;background:none;border:none;color:var(--mute);font-size:20px;cursor:pointer;z-index:3">×</button>'+
       '<div id="skv-sky"></div><div id="skv-detail"></div></div>';
@@ -7326,7 +7325,7 @@ ready(function(){
 </style>
 <script>
 /* v7-atelier.js — heartbeat as a five-line stave (情绪=五线谱) and memory as a
-   star map (记忆=星座图). Notes & stars open the universal reader. Canon-ready:
+   star map (记忆=星座图). Notes & stars open the universal reader. Ready:
    reads window.CC_COMP.heartbeat.score / .memories, else evocative fallback. */
 (function(){
   function ready(fn){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn); else fn(); }

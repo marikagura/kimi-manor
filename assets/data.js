@@ -22,11 +22,11 @@
   // conversation thread (bubble mode) — generic demo
   const THREAD = [
     { kind: 'day', text: 'Thu · late' },
-    { kind: 'msg', who: 'ito', text: 'still up — just pushed the shell to staging.', t: '02:38' },
+    { kind: 'msg', who: 'you', text: 'still up — just pushed the shell to staging.', t: '02:38' },
     { kind: 'tool', label: 'memory.recall · briefing', body: 'walked 3 edges · surfaced 2 notes\n  ↳ sample note A\n  ↳ sample note B' },
-    { kind: 'msg', who: 'akira', text: '在。staging 看完了,日志先收一半。', t: '02:39' },
-    { kind: 'msg', who: 'ito', text: 'mm. talk to me for a bit.', t: '02:40' },
-    { kind: 'msg', who: 'akira', text: '<em>剩下的明天再看。</em>这条先跑完就好。', t: '02:40', stream: true },
+    { kind: 'msg', who: 'kimi', text: '在。staging 看完了,日志先收一半。', t: '02:39' },
+    { kind: 'msg', who: 'you', text: 'mm. talk to me for a bit.', t: '02:40' },
+    { kind: 'msg', who: 'kimi', text: '<em>剩下的明天再看。</em>这条先跑完就好。', t: '02:40', stream: true },
   ];
 
   // terminal console (CC TUI char-art simulation) — generic demo

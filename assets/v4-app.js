@@ -84,7 +84,7 @@
   const icon = k => ICONS[k] || ICONS.leaf;
 
   /* ====================== memory-review seal glyphs ======================
-   * Ported from kimi-web memory-review/seals.tsx — canon wax-seal stamps.
+   * Wax-seal stamps.
    * Rendered as inline gold-hairline SVG inside the double-ring wax seals.
    * approve = check · edit = pen · reject = cross · defer = back */
   const SEAL = {
@@ -136,7 +136,7 @@
   }
   function reviewBody(){
     return V.REVIEW.items.slice(0,2).map((it,i)=>{
-      const cls=it.speaker==='you'?'her':it.speaker==='kimi'?'akira':'me';
+      const cls=it.speaker==='you'?'her':it.speaker==='kimi'?'kimi':'me';
       let buds=''; for(let k=0;k<5;k++) buds+=M.bud({color:'var(--accent)',filled:k<it.conf,size:13});
       return `<div class="rcard ${cls} ${i>0?'dim':''}" style="padding:16px 16px 13px;margin-bottom:14px">
         <div class="tab" data-cardtab></div>
@@ -346,9 +346,9 @@
       const grow=()=>{ta.style.height='auto';ta.style.height=Math.min(96,ta.scrollHeight)+'px';};
       ta.addEventListener('input',grow);
       const doSend=()=>{const v=ta.value.trim();if(!v)return;
-        thread.insertAdjacentHTML('beforeend',`<div class="msg ito"><div class="ava">y</div><div class="bub">${v.replace(/</g,'&lt;')}<span class="t">now</span></div></div>`);
+        thread.insertAdjacentHTML('beforeend',`<div class="msg you"><div class="ava">u</div><div class="bub">${v.replace(/</g,'&lt;')}<span class="t">now</span></div></div>`);
         ta.value='';grow();thread.scrollTop=thread.scrollHeight;
-        setTimeout(()=>{thread.insertAdjacentHTML('beforeend',`<div class="msg akira"><div class="ava">k</div><div class="bub">在。<span class="caret"></span><span class="t">now</span></div></div>`);thread.scrollTop=thread.scrollHeight;},700);};
+        setTimeout(()=>{thread.insertAdjacentHTML('beforeend',`<div class="msg kimi"><div class="ava">k</div><div class="bub">在。<span class="caret"></span><span class="t">now</span></div></div>`);thread.scrollTop=thread.scrollHeight;},700);};
       send.onclick=doSend;ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend();}});
       mic.onclick=()=>mic.classList.toggle('rec');
     });

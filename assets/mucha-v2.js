@@ -1,5 +1,5 @@
-// mucha-v2.js — extra Art Nouveau ornaments for the kimi-room v2 modules.
-// Extends window.Mucha (base set lives in mucha.js). Faithful to canon room:
+// mucha-v2.js — extra Art Nouveau ornaments for the v2 modules.
+// Extends window.Mucha (base set lives in mucha.js). Room ornaments:
 // rose flourishes, confidence seed-buds, sitting fox glyph, event diamond,
 // the centered header rule, and the framed-card pediment tab.
 (function (root) {

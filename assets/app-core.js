@@ -117,7 +117,7 @@
     return D.THREAD.map(item => {
       if (item.kind === 'day') return `<div class="daymark">${item.text}</div>`;
       if (item.kind === 'tool') return `<div class="tool"><span class="arrow">›</span><span class="mk">⏺</span> ${item.label}</div><div class="tool-body">${item.body}</div>`;
-      const who = item.who === 'ito' ? 'y' : 'k';
+      const who = item.who === 'you' ? 'u' : 'k';
       const caret = item.stream ? '<span class="caret"></span>' : '';
       return `<div class="msg ${item.who}"><div class="ava">${who}</div><div class="bub">${item.text}${caret}<span class="t">${item.t}</span></div></div>`;
     }).join('');

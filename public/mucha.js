@@ -1,4 +1,4 @@
-// mucha.js — Art Nouveau SVG ornaments, ported 1:1 from kimi-room's React
+// mucha.js — Art Nouveau SVG ornaments. From the React
 // components (MuchaMedallion / MuchaVine / MuchaMosaic / MoonPhaseSvg).
 // Pure functions → SVG markup strings. color = hairline, accent = bud/leaf.
 

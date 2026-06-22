@@ -1,4 +1,4 @@
-/* comp-sky.js — standalone vanilla port of kimi-web SkyView (score/SkyView.tsx).
+/* comp-sky.js — a star-map widget (standalone vanilla).
    Decorative celestial star-map: dark field, scattered hairline stars (3 depth
    layers, slow twinkle), a few gold constellation lines, a crescent moon, and a
    single haloed "pole" star labelled "— now". GENERIC DEMO only.

@@ -1,5 +1,5 @@
 /* comp-sleep.js — cc-gild demo panel · sleep candles.
-   Vanilla port (visual essence) of kimi-web SleepCandlesEditable / Gothic Candle.
+   An editable sleep-candles widget (visual essence) / Gothic Candle.
    ~7 lit candles, wax height scales with nightly sleep hours; gold for restful
    nights, sage for short ones. GENERIC DEMO data only. persona kimi / you.
    Reuses cc-gild tokens: --accent --hair --ink --mute --serif --cjk. */

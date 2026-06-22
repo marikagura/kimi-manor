@@ -42,9 +42,9 @@ The `?state=` HTTP fetch above is the one-shot path for static hosting.
   // conversation thread (bubble mode). kind: day | msg | tool
   "thread": [
     { "kind": "day",  "text": "Thu · late" },
-    { "kind": "msg",  "who": "ito",   "text": "still up.", "t": "02:38" },
+    { "kind": "msg",  "who": "you",   "text": "still up.", "t": "02:38" },
     { "kind": "tool", "label": "memory.recall", "body": "walked 3 edges" },
-    { "kind": "msg",  "who": "akira", "text": "在。", "t": "02:39", "stream": true }
+    { "kind": "msg",  "who": "kimi", "text": "在。", "t": "02:39", "stream": true }
   ],
 
   // terminal mode char-art lines (optional; array of [className, text] pairs per line)
@@ -72,7 +72,7 @@ The `?state=` HTTP fetch above is the one-shot path for static hosting.
 }
 ```
 
-`who: "ito"` = the user (rose side), `who: "akira"` = the agent (gold side).
+`who: "you"` = the user (rose side), `who: "kimi"` = the agent (gold side).
 Icon keys for travel souvenirs: `amphora | shell | feather | key | leaf`.
 
 ## ops observatory (wired · its own fast poll)

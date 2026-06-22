@@ -10,9 +10,9 @@
   ],
   "thread": [
     { "kind": "day",  "text": "Sat · late" },
-    { "kind": "msg",  "who": "ito",   "text": "loaded from ?state= — the seam works.", "t": "01:12" },
+    { "kind": "msg",  "who": "you",   "text": "loaded from ?state= — the seam works.", "t": "01:12" },
     { "kind": "tool", "label": "state.fetch · cc-gild-state", "body": "merged over placeholder · re-rendered rooms" },
-    { "kind": "msg",  "who": "akira", "text": "在。换成你的端点就是实时的了。", "t": "01:12", "stream": true }
+    { "kind": "msg",  "who": "kimi", "text": "在。换成你的端点就是实时的了。", "t": "01:12", "stream": true }
   ],
   "travel": {
     "status": "home",

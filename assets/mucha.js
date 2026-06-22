@@ -1,5 +1,5 @@
 // mucha.js — Art Nouveau SVG ornaments for cc-gild.
-// Ported 1:1 from kimi-room canon (MuchaMedallion / MuchaVine / MuchaMosaic /
+// Art Nouveau ornaments (MuchaMedallion / MuchaVine / MuchaMosaic /
 // MoonPhaseSvg) and extended with the descending-gold window furniture
 // (pediment, gable, rule, corner-flourish) the OS-desktop shell needs.
 // Pure functions -> SVG markup strings. color = hairline, accent = bud/leaf.
@@ -64,7 +64,7 @@
     return moon + roseDial(size);
   }
 
-  // Canon /room day-mode hero — the real RoseBloomDial: a single Mucha-pink rose
+  // /room day-mode hero — the real RoseBloomDial: a single Mucha-pink rose
   // head (rose-single-pink.png) with slow rotate (90s) + breath (1.0→1.04) + a
   // soft rose halo pulse. Shown ONLY in day mode (see .mp-rose CSS). The breath +
   // halo live on wrapper layers (.mp-rose / .mp-rose-halo) so the image's own
@@ -86,7 +86,7 @@
   }
 
   // A taller gable with side spires — for the mobile room hero, echoing the
-  // poster-arch (MuchaArch) over the medallion in the canon /room home.
+  // poster-arch (MuchaArch) over the medallion in the room home.
   function arch({ color = 'currentColor', accent } = {}) {
     const a = accent ?? color;
     return `<svg viewBox="0 0 320 120" width="100%" preserveAspectRatio="xMidYMin meet" aria-hidden="true" style="color:${color};display:block">

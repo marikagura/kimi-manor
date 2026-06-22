@@ -1,5 +1,5 @@
 // comp-disc.js — turntable panel for cc-gild.
-// Vanilla port (visual essence only) of kimi-web DiscClient.tsx: a vinyl disc
+// A vinyl-disc widget (visual essence only): a vinyl disc
 // (concentric grooves + center label) on a felt platter, a brass tonearm, slow
 // CSS rotation, and a generic "now playing" line. Uses cc-gild v2.css tokens.
 // GENERIC DEMO content only. Attaches to window.Comp.disc(el).
