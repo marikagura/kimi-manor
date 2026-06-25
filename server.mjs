@@ -272,7 +272,16 @@ ptyWss.on('connection', async (socket) => {
   try {
     term = pty.spawn(cmd, args, {
       name: 'xterm-256color', cols: 80, rows: 24, cwd: CC_CWD,
-      env: { ...process.env, TERM: 'xterm-256color', COLORTERM: 'truecolor' },
+      // UTF-8 locale — a GUI launch (Finder/Dock) inherits no LANG, so the pty falls back
+      // to C/POSIX; zsh line-editing and TUI apps then treat multibyte UTF-8 as single
+      // bytes (per-byte input echo, mojibake on select-copy). Supply LANG + LC_CTYPE,
+      // respecting any value already in the environment.
+      env: {
+        ...process.env,
+        LANG: process.env.LANG || 'en_US.UTF-8',
+        LC_CTYPE: process.env.LC_CTYPE || process.env.LANG || 'en_US.UTF-8',
+        TERM: 'xterm-256color', COLORTERM: 'truecolor',
+      },
     });
   } catch (e) {
     socket.send(`\r\n\x1b[38;2;191;122;74m无法启动 "${cmd}": ${e.message}\x1b[0m\r\n` +

@@ -104,6 +104,11 @@ body{background:var(--bg);background-attachment:fixed}
 #term{height:100%}
 .termwrap::before{content:"";position:absolute;left:14px;right:14px;top:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--hair),transparent)}
+/* IME: xterm's inline composition preview (.composition-view — white-space:nowrap, no
+   right bound) runs off the terminal's right edge when the cursor sits there and escapes
+   the termwrap clip. Hide it; CJK input still works through the OS IME candidate window
+   (shown at the caret), so no function is lost. */
+.xterm .composition-view{display:none}
 
 /* ---------------- mobile ---------------- */
 @media (max-width:760px){
