@@ -1,3 +1,5 @@
+> English: ./ELECTRON.en.md
+
 # cc-gild → 桌面 app（Electron）
 
 > ⚠️ **未测试**：这套打包配置照着一份能跑通的设置写出来，但 `.dmg` / `.exe` 的成品**还没实际构建验证过**。
