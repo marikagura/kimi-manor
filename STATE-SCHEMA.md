@@ -124,6 +124,30 @@ Each comp reads `window.CC_COMP.<name>.<field>` at mount, falling back to its in
 so a partial `comps` object only overrides what it names. The tap-to-open overlays
 (heartbeat → score · shelf → study · candle → sleep) read the same comps.
 
+## Live from kimi (room store / core)
+
+`server.mjs` can pull YOUR kimi data and feed this state — in two tiers (both
+optional; either missing → the demo). Both are **generic plumbing**: they fetch your
+data and hand it to a `mapToState()` function. They do NOT impose a mapping — how a
+row becomes a panel is personal (your finance model, your sleep pipeline, your
+memory) — so `mapToState()` ships as a **stub returning `{}` → the demo stays put**.
+Fill it in (`server-state-from-rows.mjs`) to render the panels you want, in your own
+shape. The result is partial; the front deep-merges it over the demo.
+
+- **Tier 1 · `DATABASE_URL`** — read kimi-room's `store_rows` from Postgres, no
+  memory engine. `npm install pg`. room (supabase / prisma adapter) writes; manor
+  reads. `fetchRows()` returns them grouped by collection.
+- **Tier 2 · `KIMI_CORE_URL` + `KIMI_API_KEY`** — pull kimi-core's neutral
+  `state_snapshot` (with `KIMI_EXTENSIONS=store`). `npm install
+  @modelcontextprotocol/sdk`. Memory and dashboard share one backend.
+
+Set `STATE_REFRESH` (seconds, default 60) to poll and re-push to clients.
+
+The panels are yours to bind: **sky** is a render (bind your own memory points),
+**sleep** takes hours from your own pipeline (e.g. an iOS Shortcut), **finance** is
+your own categories/model, **memory** is your own source. The derived / telemetry
+panels (`score`, `opus`, most of `ops`) have no open source and stay demo by design.
+
 ## Still demo (by design)
 
 - **`calendar`** — manages its own `localStorage` store; needs a dedicated integration

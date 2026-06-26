@@ -77,6 +77,15 @@ http://localhost:8753/cc-gild-v7.html?state=./state.sample.json
 **ops** 室怎么按自己更快的节奏轮询：见 [STATE-SCHEMA.md](STATE-SCHEMA.md)。你端点省略的 `comps` / `ops`
 就停在内置 demo，所以只给一部分也行。
 
+### 接 kimi（room store / core）
+
+`server.mjs` 可以把**你自己的** kimi 数据取来喂给 state，两层（都可选，缺则回退 demo）。两层都是**通用管道**：取数后交给一个 `mapToState()`——它**不**替你决定哪条数据进哪个面板（finance 各人不同、sleep 是你自己的管道、memory 自己接），所以 `mapToState()` 出厂是个 **stub，返回 `{}` → 保持 demo**。你按自己的形状填它（`server-state-from-rows.mjs`），渲染想要的面板；结果是 partial，前端叠在 demo 上。
+
+- **Tier 1 · `DATABASE_URL`**（不跑 core）：直读 kimi-room 的 `store_rows`（`npm install pg`），`fetchRows()` 按 collection 分好给你。
+- **Tier 2 · `KIMI_CORE_URL` + `KIMI_API_KEY`**：拉 kimi-core 的中性 `state_snapshot`（core 上 `KIMI_EXTENSIONS=store`，`npm install @modelcontextprotocol/sdk`）。记忆和 dashboard 一个后端。
+
+设 `STATE_REFRESH`（秒，默认 60）轮询重推。面板都归你绑：sky 只是画法（自己绑 memory 点）、sleep 用你自己的管道（比如 iOS Shortcut）、finance 你自己的模型、memory 自己接。详见 [STATE-SCHEMA.md](STATE-SCHEMA.md)。
+
 ## 元素
 
 - 全手绘金线 SVG

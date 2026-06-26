@@ -25,6 +25,10 @@
 //   OPENAI_API_KEY=sk-...          enables /parlour/voice via OpenAI TTS
 //   CCG_TTS_URL  CCG_TTS_KEY       point /parlour/voice at any OpenAI-compatible TTS endpoint
 //   CCG_TTS_MODEL=gpt-4o-mini-tts  CCG_VOICE_CLAUDE=onyx  CCG_VOICE_GPT=cedar
+//   ── live state from kimi (optional; else state.sample.json) ──
+//   DATABASE_URL=postgres://…      Tier 1: read kimi-room's store_rows directly (npm i pg)
+//   KIMI_CORE_URL + KIMI_API_KEY   Tier 2: pull state_snapshot from kimi-core (npm i @modelcontextprotocol/sdk)
+//   STATE_REFRESH=60               poll seconds for Tier 1/2 re-push (0 = off)
 
 import http from 'node:http';
 import { spawn } from 'node:child_process';
@@ -126,11 +130,39 @@ async function handleVoice(req, res) {
 }
 
 // ── /state — live atelier state push ────────────────────────────────────────
-// Composes from state.sample.json (the offline placeholder). To drive it from your
-// own data, replace composeState() with a read that returns the same shape — see
-// STATE-SCHEMA.md — and trigger pushers on change.
+// Three tiers, picked by env (all optional → graceful fallback to the placeholder):
+//   Tier 2  KIMI_CORE_URL + KIMI_API_KEY  → a running kimi-core (state_snapshot)
+//   Tier 1  DATABASE_URL                  → kimi-room's store_rows over pg (no core)
+//   Tier 0  (neither)                     → state.sample.json (offline demo)
+// The mapped result is partial; the front deep-merges it over the inlined
+// placeholder, so any unmapped panel keeps the demo. See STATE-SCHEMA.md.
+async function readSample() {
+  try { return JSON.parse(await readFile(join(ROOT, 'state.sample.json'), 'utf8')); } catch (_) { return {}; }
+}
+// Live tiers pull YOUR data (no core: store_rows over pg · core: state_snapshot)
+// and hand it to mapToState() — which ships as a stub returning {} (demo). Fill it
+// to render your own panels (server-state-from-rows.mjs). A live tier returns a
+// PARTIAL state; the front deep-merges it over the inlined demo. No tier → demo.
 async function composeState() {
-  let s; try { s = JSON.parse(await readFile(join(ROOT, 'state.sample.json'), 'utf8')); } catch (_) { s = {}; }
+  try {
+    if (process.env.KIMI_CORE_URL && process.env.KIMI_API_KEY) {
+      const { fetchSnapshot } = await import('./server-state-from-core.mjs');
+      const { mapToState } = await import('./server-state-from-rows.mjs');
+      const s = mapToState(await fetchSnapshot(process.env.KIMI_CORE_URL, process.env.KIMI_API_KEY));
+      if (_wx) s.weather = _wx;
+      return s;
+    }
+    if (process.env.DATABASE_URL) {
+      const { fetchRows } = await import('./server-state-from-db.mjs');
+      const { mapToState } = await import('./server-state-from-rows.mjs');
+      const s = mapToState({ store: await fetchRows(process.env.DATABASE_URL) });
+      if (_wx) s.weather = _wx;
+      return s;
+    }
+  } catch (e) {
+    console.error('[state] source failed → placeholder:', e && e.message);
+  }
+  const s = await readSample();
   if (_wx) s.weather = _wx;   // optional live weather (open-meteo) merged over the demo
   return s;
 }
@@ -145,6 +177,12 @@ stateWss.on('connection', (socket) => {
 // editing state.sample.json pushes to every client (proves the live pipe).
 let wt = null;
 try { watch(join(ROOT, 'state.sample.json'), () => { clearTimeout(wt); wt = setTimeout(() => pushers.forEach((f) => f()), 120); }); } catch (_) {}
+// Tier 1/2 have no file to watch — poll the backend every STATE_REFRESH seconds
+// (default 60; set 0 to disable) and re-push to live clients.
+const STATE_REFRESH = Number(process.env.STATE_REFRESH || 60);
+if (STATE_REFRESH > 0 && (process.env.KIMI_CORE_URL || process.env.DATABASE_URL)) {
+  setInterval(() => pushers.forEach((f) => f()), Math.max(5, STATE_REFRESH) * 1000);
+}
 
 // ── optional live weather (open-meteo · keyless) ────────────────────────────
 // Blank by default — set CCG_WEATHER_LAT / CCG_WEATHER_LNG / CCG_WEATHER_PLACE to your location,
