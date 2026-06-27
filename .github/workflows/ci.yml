@@ -1,0 +1,26 @@
+name: ci
+# Syntax gate for the server + electron entrypoints. The dashboard is plain
+# ESM/CJS (no TypeScript), so this parses every tracked .mjs/.cjs with `node
+# --check` — it catches syntax breakage before it reaches main. leak-guard.yml
+# handles the identity allow-gate + shape-layer scrub separately.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: node --check every .mjs / .cjs
+        run: |
+          rc=0
+          for f in $(git ls-files '*.mjs' '*.cjs'); do
+            echo "node --check $f"
+            node --check "$f" || rc=1
+          done
+          exit $rc
