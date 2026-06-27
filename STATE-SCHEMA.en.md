@@ -132,7 +132,7 @@ so a partial `comps` object only overrides what it names. The tap-to-open overla
 optional; either missing → the demo). Both are **generic plumbing**: they fetch your
 data and hand it to a `mapToState()` function. They do NOT impose a mapping — how a
 row becomes a panel is personal (your finance model, your sleep pipeline, your
-memory) — so `mapToState()` ships as a **stub returning `{}` → the demo stays put**.
+memory) — so `mapToState()` ships a **default binding for the `review` panel** (kimi-core's `state_snapshot` → Memory & Review: open pending + active states + the 30 newest memories); every other panel stays demo.
 Fill it in (`server-state-from-rows.mjs`) to render the panels you want, in your own
 shape. The result is partial; the front deep-merges it over the demo.
 

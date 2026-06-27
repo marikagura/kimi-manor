@@ -114,7 +114,7 @@ travel 纪念品的 icon 键：`amphora | shell | feather | key | leaf`。
 
 ## 从 kimi 取实时数据（room store / core）
 
-`server.mjs` 可以把**你自己的** kimi 数据拉来喂这份 state —— 两层（都可选；缺哪个 → demo）。两层都是**通用管道**：取你的数据、交给一个 `mapToState()` 函数。它们**不**替你决定映射 —— 一条 row 怎么变成一个面板是私人的（你的 finance 模型、你的 sleep 管道、你的 memory）—— 所以 `mapToState()` 出厂是个**返回 `{}` 的 stub → demo 原样保留**。在 `server-state-from-rows.mjs` 里填它，按你自己的形状渲染想要的面板。结果是 partial；前端深合并叠在 demo 上。
+`server.mjs` 可以把**你自己的** kimi 数据拉来喂这份 state —— 两层（都可选；缺哪个 → demo）。两层都是**通用管道**：取你的数据、交给一个 `mapToState()` 函数。它们**不**替你决定映射 —— 一条 row 怎么变成一个面板是私人的（你的 finance 模型、你的 sleep 管道、你的 memory）—— 所以 `mapToState()` 出厂为 `review` 面板带一个**默认绑定**（kimi-core 的 `state_snapshot` → Memory & Review：pending + 活跃状态 + 最近 30 条记忆），其余面板停在 demo。在 `server-state-from-rows.mjs` 里改它，按你自己的形状渲染想要的面板。结果是 partial；前端深合并叠在 demo 上。
 
 - **Tier 1 · `DATABASE_URL`** —— 从 Postgres 直读 kimi-room 的 `store_rows`，不用记忆引擎。`npm install pg`。room（supabase / prisma adapter）写，manor 读。`fetchRows()` 把它们按 collection 分好返回。
 - **Tier 2 · `KIMI_CORE_URL` + `KIMI_API_KEY`** —— 拉 kimi-core 的中性 `state_snapshot`（core 上设 `KIMI_EXTENSIONS=store`）。`npm install @modelcontextprotocol/sdk`。记忆和 dashboard 共用一个后端。

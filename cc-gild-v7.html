@@ -5001,7 +5001,7 @@ window.Comp.radio = function (el) {
       +dot+'</svg>';
   }
   function reviewBody(){
-    return V.REVIEW.items.slice(0,30).map((it,i)=>{
+    return V.REVIEW.items.slice(0,200).map((it,i)=>{
       const cls=it.speaker==='you'?'her':it.speaker==='kimi'?'kimi':'me';
       let buds=''; for(let k=0;k<5;k++) buds+=roseBud(k<it.conf,14);
       return `<div class="rcard ${cls}" style="padding:16px 16px 13px;margin-bottom:14px">

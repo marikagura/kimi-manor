@@ -9,7 +9,8 @@
 //   - sky:     the constellation is a RENDER; bind your own memory points to it
 //   - memory:  connect your own source
 //
-// So mapToState() ships as a STUB returning {} → every panel stays on the demo.
+// So mapToState() ships a DEFAULT binding for the `review` panel (kimi-core
+// state_snapshot → Memory & Review, below); every other panel stays on the demo.
 // Fill in only the panels you want, in YOUR shape (see STATE-SCHEMA.md for each
 // panel's fields). The result is a PARTIAL state; the front deep-merges it over
 // the inlined demo, so anything you don't map keeps the placeholder.
@@ -40,7 +41,49 @@ export function groupRows(rows) {
 //   const sleep = snapshot?.store?.sleep ?? [];           // your own sleep rows
 //   return { comps: { sleep: { nights: sleep.map((s) => ({ label: s.date, hrs: s.hrs })) } } };
 //
+// Default binding for the `review` panel (Memory & Review): map kimi-core's neutral
+// state_snapshot (Tier 2) → open pending items + active states + the 30 newest
+// memories (all types except RESTRICTED), in that order — the same three things
+// kimi-room's memory-review shows. A sensible default, NOT a mandate: it only fires
+// with a core (KIMI_CORE_URL + KIMI_EXTENSIONS=store); without one the snapshot
+// lacks these fields → {} → the panel keeps its demo. Re-map any panel in YOUR shape.
 export function mapToState(snapshot) {
-  void snapshot; // your data, your mapping — see the example above and STATE-SCHEMA.md
-  return {};
+  if (!snapshot || typeof snapshot !== "object") return {};
+  const clamp5 = (n) => Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+  const ts = (iso) =>
+    typeof iso === "string" ? iso.slice(0, 16).replace("T", " ").replace(/-/g, ".") : "";
+  const join = (...xs) => xs.filter(Boolean).join(" — ");
+
+  const items = [];
+  for (const p of snapshot.pending ?? []) {
+    items.push({
+      id: p.id,
+      ts: ts(p.createdAt),
+      speaker: "kimi",
+      type: `pending · ${p.pendingType ?? "?"}`,
+      conf: clamp5(p.priority),
+      body: join(p.title, p.proposedAction || p.content),
+    });
+  }
+  for (const s of snapshot.states ?? []) {
+    items.push({
+      id: s.id,
+      ts: ts(s.startAt),
+      speaker: "kimi",
+      type: `state · ${s.stateType ?? "?"}`,
+      conf: 4,
+      body: join(s.title, s.summary || s.content),
+    });
+  }
+  for (const m of snapshot.recentMemories ?? []) {
+    items.push({
+      id: m.id,
+      ts: ts(m.createdAt),
+      speaker: "you",
+      type: `${m.memoryType ?? "MEMORY"}${m.isActive === false ? " · closed" : ""}`,
+      conf: clamp5(m.importance),
+      body: join(m.title, m.summary || m.content),
+    });
+  }
+  return items.length ? { review: { items } } : {};
 }
