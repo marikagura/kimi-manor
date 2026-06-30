@@ -173,6 +173,9 @@ stateWss.on('connection', (socket) => {
   send();                       // initial snapshot
   pushers.add(send);            // re-push on change
   socket.on('close', () => pushers.delete(send));
+  // ws emits 'error' on an abrupt client reset; an unlistened 'error' re-throws and
+  // crashes the whole backend (and orphans every child). Swallow + drop the socket.
+  socket.on('error', () => { pushers.delete(send); try { socket.close(); } catch (_) {} });
 });
 // editing state.sample.json pushes to every client (proves the live pipe).
 let wt = null;
@@ -247,6 +250,11 @@ const ptyWss = new WebSocketServer({ noServer: true });
 // Track live ptys so a server shutdown (e.g. the desktop shell's quit → SIGTERM) kills the
 // shell/claude children too — otherwise each pty orphans and keeps running across quits.
 const LIVE_TERMS = new Set();
+// Likewise track /codex child processes and /agent AbortControllers so _shutdown can kill/abort
+// them. On SIGTERM process.exit runs synchronously, so socket 'close' can't fire in time —
+// without this registry the codex/claude children orphan on every mid-run quit.
+const LIVE_CODEX = new Set();
+const LIVE_AGENTS = new Set();
 
 // ── /agent — Claude Agent SDK bridge (The Salon · Claude seat) ───────────────
 // Uses the locally installed @anthropic-ai/claude-agent-sdk (or CCG_SDK), the
@@ -343,6 +351,9 @@ ptyWss.on('connection', async (socket) => {
     else if (kind === '1') { try { const { cols, rows } = JSON.parse(data); term.resize(cols, rows); } catch (_) {} }
   });
   socket.on('close', () => { LIVE_TERMS.delete(term); try { term.kill(); } catch (_) {} });
+  // An unlistened 'error' (e.g. an abrupt client RST) re-throws and crashes the backend;
+  // swallow it and kill this pty.
+  socket.on('error', () => { LIVE_TERMS.delete(term); try { term.kill(); } catch (_) {} try { socket.close(); } catch (_) {} });
 });
 
 agentWss.on('connection', async (socket) => {
@@ -364,6 +375,7 @@ agentWss.on('connection', async (socket) => {
     if (!cwd) { send({ type: 'error', error: 'cwd not allowed: ' + m.cwd }); return; }
     busy = true;
     const ac = new AbortController(); curAbort = ac;
+    LIVE_AGENTS.add(ac);   // register for shutdown so _shutdown can abort an in-flight query
     try {
       const opts = {
         cwd,
@@ -404,9 +416,12 @@ agentWss.on('connection', async (socket) => {
         }
       }
     } catch (e) { if (ac && ac.signal.aborted) send({ type: 'done' }); else send({ type: 'error', error: e.message }); }
-    finally { busy = false; curAbort = null; drainPending(); }
+    finally { busy = false; curAbort = null; LIVE_AGENTS.delete(ac); drainPending(); }
   });
-  socket.on('close', drainPending);
+  // An ordinary window/socket close must abort the in-flight query too, or the Agent SDK's
+  // claude subprocess runs to completion after the user has gone.
+  socket.on('close', () => { if (curAbort) { try { curAbort.abort(); } catch (_) {} } drainPending(); });
+  socket.on('error', () => { if (curAbort) { try { curAbort.abort(); } catch (_) {} } try { socket.close(); } catch (_) {} });
 });
 
 codexWss.on('connection', (socket) => {
@@ -424,9 +439,10 @@ codexWss.on('connection', (socket) => {
       ? ['exec', 'resume', resume, ...CODEX_COMMON, ...mdl, text]
       : ['exec', ...CODEX_COMMON, ...mdl, '-C', SALON_CWD, text];
     busy = true; interrupted = false;
-    let errBuf = '', gotText = false, buf = '';
+    let errBuf = '', gotText = false, buf = '', reportedError = false;   // reportedError: a spawn 'error' must not also report on 'close'
     try { child = spawn(CODEX_BIN, args, { stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env } }); }
     catch (e) { busy = false; send({ type: 'error', error: 'codex failed to start: ' + e.message }); return; }
+    LIVE_CODEX.add(child);   // register for shutdown so _shutdown can kill this child
     child.stdout.on('data', (d) => {
       buf += d.toString();
       let nl;
@@ -443,13 +459,17 @@ codexWss.on('connection', (socket) => {
       }
     });
     child.stderr.on('data', (d) => { errBuf += d.toString(); if (errBuf.length > 2000) errBuf = errBuf.slice(-2000); });
-    child.on('error', (e) => { busy = false; send({ type: 'error', error: 'codex failed to start: ' + e.message }); });
+    child.on('error', (e) => { reportedError = true; busy = false; send({ type: 'error', error: 'codex failed to start: ' + e.message }); });
     child.on('close', (code) => {
-      if (!interrupted && !gotText && code !== 0) send({ type: 'error', error: 'codex exited ' + code + (errBuf ? ': ' + errBuf.trim().split('\n').slice(-3).join(' ') : '') });
+      LIVE_CODEX.delete(child);
+      // If spawn already emitted 'error' (code===null here), don't report a second
+      // contradictory 'codex exited null' line for the same failure.
+      if (!reportedError && !interrupted && !gotText && code !== 0) send({ type: 'error', error: 'codex exited ' + code + (errBuf ? ': ' + errBuf.trim().split('\n').slice(-3).join(' ') : '') });
       busy = false; send({ type: 'done' });
     });
   });
   socket.on('close', () => { try { child && child.kill(); } catch (_) {} });
+  socket.on('error', () => { try { child && child.kill(); } catch (_) {} try { socket.close(); } catch (_) {} });
 });
 
 server.listen(PORT, '127.0.0.1', () => {
@@ -460,10 +480,23 @@ server.listen(PORT, '127.0.0.1', () => {
 
 // Clean shutdown — kill every live pty so a quit (SIGTERM/SIGINT) doesn't leave orphaned
 // shell/claude processes running. Without this they pile up across restarts.
-function _shutdown() {
+let _shuttingDown = false;
+function _shutdown(code = 0) {
+  if (_shuttingDown) return; _shuttingDown = true;
   for (const t of LIVE_TERMS) { try { t.kill(); } catch (_) {} }
   LIVE_TERMS.clear();
-  process.exit(0);
+  // Reap /codex children and abort /agent queries too, or they orphan alongside the backend.
+  for (const c of LIVE_CODEX) { try { c.kill(); } catch (_) {} }
+  LIVE_CODEX.clear();
+  for (const a of LIVE_AGENTS) { try { a.abort(); } catch (_) {} }
+  LIVE_AGENTS.clear();
+  process.exit(code);
 }
-process.on('SIGTERM', _shutdown);
-process.on('SIGINT', _shutdown);
+// signal handlers pass the signal name as the first arg — wrap so it can't reach process.exit.
+process.on('SIGTERM', () => _shutdown(0));
+process.on('SIGINT', () => _shutdown(0));
+// An uncaught exception/rejection (e.g. a stray socket 'error' that slipped through) must not
+// let the process die bare and orphan every child — run _shutdown to reap pty/codex/agent first.
+// non-zero exit on a crash so a supervisor/launcher sees the failure (a clean SIGTERM exits 0).
+process.on('uncaughtException', (e) => { try { console.error('[fatal] uncaughtException:', e && e.stack || e); } catch (_) {} _shutdown(1); });
+process.on('unhandledRejection', (e) => { try { console.error('[fatal] unhandledRejection:', e && e.stack || e); } catch (_) {} _shutdown(1); });
