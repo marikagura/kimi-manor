@@ -58,8 +58,19 @@ const ROOT_FILES = {
 };
 
 // ── HTTP: static host + /parlour/voice ──────────────────────────────────────
+// Host allowlist: the server binds 127.0.0.1, so every legitimate request carries
+// a localhost Host header. A foreign Host means DNS rebinding — a browser page on
+// evil.example whose DNS re-resolves to 127.0.0.1 reaches us "same-origin" (so no
+// Origin header to check) but cannot forge Host. Reject those outright.
+function isLocalHost(req) {
+  const host = String(req.headers.host || '');
+  const name = host.replace(/:\d+$/, '');
+  return name === 'localhost' || name === '127.0.0.1' || name === '[::1]';
+}
+
 const server = http.createServer(async (req, res) => {
   try {
+    if (!isLocalHost(req)) { res.writeHead(403); return res.end('forbidden'); }
     let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
 
     if (p === '/parlour/voice' && req.method === 'POST') return handleVoice(req, res);
@@ -104,7 +115,12 @@ async function handleVoice(req, res) {
     res.writeHead(503, { 'content-type': 'application/json' });
     return res.end('{"error":"no TTS configured — set OPENAI_API_KEY, or CCG_TTS_URL + CCG_TTS_KEY"}');
   }
-  let buf = ''; for await (const c of req) buf += c;
+  // cap the body — this endpoint spends TTS credits and buffers in memory.
+  let buf = '';
+  for await (const c of req) {
+    buf += c;
+    if (buf.length > 64 * 1024) { res.writeHead(413, { 'content-type': 'application/json' }); return res.end('{"error":"body too large"}'); }
+  }
   let d = {}; try { d = JSON.parse(buf); } catch (_) {}
   const text = String(d.text || '').trim();
   const who = d.who === 'gpt' ? 'gpt' : 'claude';
@@ -296,7 +312,12 @@ server.on('upgrade', (req, sock, head) => {
   let pathname = '/';
   try { pathname = new URL(req.url, 'http://x').pathname; } catch (_) {}
   // only accept WS from the local app: same-origin localhost, or no Origin (electron/cli).
-  // a cross-origin page's JS is rejected; combined with the 127.0.0.1 bind, nothing off-box connects.
+  // a cross-origin page's JS is rejected; combined with the 127.0.0.1 bind + the Host
+  // allowlist (kills DNS rebinding), nothing off-box connects. NOTE this is the whole
+  // gate — there is no token auth. Do not front this server with a reverse proxy or
+  // tunnel: proxies connect from localhost and often strip Origin, which would hand
+  // the /pty shell to anyone who reaches the proxy.
+  if (!isLocalHost(req)) { try { sock.destroy(); } catch (_) {} return; }
   const origin = req.headers.origin;
   if (origin && origin !== 'http://localhost:' + PORT && origin !== 'http://127.0.0.1:' + PORT) { try { sock.destroy(); } catch (_) {} return; }
   if (pathname === '/state') stateWss.handleUpgrade(req, sock, head, (ws) => stateWss.emit('connection', ws, req));
@@ -306,7 +327,22 @@ server.on('upgrade', (req, sock, head) => {
   else sock.destroy();
 });
 
+const MAX_TERMS = Number(process.env.CC_MAX_TERMS || 12);
+
 ptyWss.on('connection', async (socket) => {
+  // Attach 'error' FIRST, before any await or early return: an unlistened 'error'
+  // (abrupt client RST during the async pty import, or on a socket left open by the
+  // no-pty degraded path below) re-throws and takes down the whole backend.
+  socket.on('error', () => { try { socket.close(); } catch (_) {} });
+  // Cap live ptys: every connection is a real shell, and without a ceiling one
+  // looping client re-opens the ttys/pty-exhaustion failure this codebase has
+  // already been burned by.
+  if (LIVE_TERMS.size >= MAX_TERMS) {
+    socket.send(`\r\n\x1b[38;2;191;122;74m终端数已达上限（${MAX_TERMS}）。\x1b[0m\r\n` +
+                '\x1b[38;2;182;164;140m关掉不用的终端再试；上限可用 CC_MAX_TERMS 调。\x1b[0m\r\n');
+    try { socket.close(); } catch (_) {}
+    return;
+  }
   const pty = await getPty();
   if (!pty) {
     socket.send('\r\n\x1b[38;2;191;122;74m终端桥不可用：node-pty 未安装。\x1b[0m\r\n' +
@@ -357,6 +393,10 @@ ptyWss.on('connection', async (socket) => {
 });
 
 agentWss.on('connection', async (socket) => {
+  // Early 'error' guard — before the await and the degraded return below, for the
+  // same reason as /pty: an unlistened socket error crashes the whole backend.
+  // The full handler (abort + close) is attached further down once state exists.
+  socket.on('error', () => { try { socket.close(); } catch (_) {} });
   const sdk = await getSdk();
   if (!sdk || !sdk.query) { try { socket.send(JSON.stringify({ type: 'error', error: 'agent SDK unavailable — npm i @anthropic-ai/claude-agent-sdk (or set CCG_SDK)' })); } catch (_) {} return; }
   let sessionId = null, busy = false, permSeq = 0, curAbort = null;
