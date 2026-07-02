@@ -5001,14 +5001,18 @@ window.Comp.radio = function (el) {
       +dot+'</svg>';
   }
   function reviewBody(){
+    // escR: this panel renders live memory content in core/DB tiers — text goes
+    // through innerHTML, so escape every interpolated field (escape AFTER slicing,
+    // the slice operates on the raw text).
+    const escR=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     return V.REVIEW.items.slice(0,200).map((it,i)=>{
       const cls=it.speaker==='you'?'her':it.speaker==='kimi'?'kimi':'me';
       let buds=''; for(let k=0;k<5;k++) buds+=roseBud(k<it.conf,14);
       return `<div class="rcard ${cls}" style="padding:16px 16px 13px;margin-bottom:14px">
         <div class="tab" data-cardtab></div>
-        <div class="top"><span class="ts">${it.ts}</span><span class="buds">${buds}</span></div>
-        <div class="body" style="font-size:13.5px;line-height:1.72;color:var(--ink)"><span style="float:left;font-family:var(--serif);font-size:38px;line-height:0.85;font-weight:500;color:var(--accent);margin:4px 7px 0 0">${(it.body||' ').charAt(0)}</span>${(it.body||'').slice(1,92)}…</div>
-        <div class="foot"><span class="pill" style="font-size:11px;padding:4px 12px"><span class="d">·</span>${it.type}</span>
+        <div class="top"><span class="ts">${escR(it.ts)}</span><span class="buds">${buds}</span></div>
+        <div class="body" style="font-size:13.5px;line-height:1.72;color:var(--ink)"><span style="float:left;font-family:var(--serif);font-size:38px;line-height:0.85;font-weight:500;color:var(--accent);margin:4px 7px 0 0">${escR((it.body||' ').charAt(0))}</span>${escR((it.body||'').slice(1,92))}…</div>
+        <div class="foot"><span class="pill" style="font-size:11px;padding:4px 12px"><span class="d">·</span>${escR(it.type)}</span>
           <div class="acts"><button class="ring seal ok" title="approve" aria-label="approve">${SEAL.check}</button><button class="ring seal edit" title="edit" aria-label="edit">${SEAL.pen}</button><button class="ring seal no" title="reject" aria-label="reject">${SEAL.cross}</button><button class="ring seal back" title="defer" aria-label="defer">${SEAL.back}</button></div></div>
       </div>`;
     }).join('');
@@ -5793,7 +5797,9 @@ window.Comp.radio = function (el) {
         if(s&&box){ var idx=mv.getAttribute('data-mantel');
           if(box.getAttribute('data-i')===idx){ box.innerHTML=''; box.removeAttribute('data-i'); }
           else { box.setAttribute('data-i',idx);
-            box.innerHTML='<div class="ml-place">'+(s.placeFull||s.place||'')+'</div>'+(s.note?'<div class="ml-note">'+s.note+'</div>':'')+(s.gift?'<div class="ml-gift">'+s.gift+'</div>':'')+(s.image&&s.image.url?'<img class="ml-photo" src="'+s.image.url+'" loading="lazy" alt=""/>':''); }
+            var escM=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
+            var imgUrl=s.image&&s.image.url&&/^(https?:\/\/|\/|\.\/)/i.test(s.image.url)?s.image.url:'';
+            box.innerHTML='<div class="ml-place">'+escM(s.placeFull||s.place||'')+'</div>'+(s.note?'<div class="ml-note">'+escM(s.note)+'</div>':'')+(s.gift?'<div class="ml-gift">'+escM(s.gift)+'</div>':'')+(imgUrl?'<img class="ml-photo" src="'+escM(imgUrl)+'" loading="lazy" alt=""/>':''); }
         } return; }
       const ring=e.target.closest('.ring'); if(ring){const card=ring.closest('.rcard'); if(card){card.style.transition='.3s';card.style.opacity='.25';}}
     });
